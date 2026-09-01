@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0x00 前言BurpSuite 是 Web 渗透最常用的工具没有之一。Intruder 模块负责自动化批量请求，是爆破、fuzz、批量注入的核心。本文梳理 Intruder 的 4 种攻击模式、Payload 类型与实战技巧。  仅用于合法授权的安全研究。  0x01 四种攻击模式   模式 适用场景 请求数    Sniper（狙击手） 单一变量爆破（如密码字段） Payload 数   Ba">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BurpSuite Intruder 入门笔记">
+<meta property="og:url" content="https://lvyatan.github.io/2026/06/10/BurpSuite-Intruder%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="0x00 前言BurpSuite 是 Web 渗透最常用的工具没有之一。Intruder 模块负责自动化批量请求，是爆破、fuzz、批量注入的核心。本文梳理 Intruder 的 4 种攻击模式、Payload 类型与实战技巧。  仅用于合法授权的安全研究。  0x01 四种攻击模式   模式 适用场景 请求数    Sniper（狙击手） 单一变量爆破（如密码字段） Payload 数   Ba">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-10T03:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T10:05:03.975Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="BurpSuite">
+<meta property="article:tag" content="Web 渗透">
+<meta property="article:tag" content="暴力破解">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/06/10/BurpSuite-Intruder%E5%85%A5%E9%97%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/06/10/BurpSuite-Intruder%E5%85%A5%E9%97%A8/","path":"2026/06/10/BurpSuite-Intruder入门/","title":"BurpSuite Intruder 入门笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>BurpSuite Intruder 入门笔记 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%9B%9B%E7%A7%8D%E6%94%BB%E5%87%BB%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">0x01 四种攻击模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E5%AE%9E%E6%88%98%EF%BC%9A%E7%99%BB%E5%BD%95%E7%88%86%E7%A0%B4"><span class="nav-number">3.</span> <span class="nav-text">0x02 实战：登录爆破</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%8A%93%E5%8C%85%E5%8F%91%E9%80%81%E5%88%B0-Intruder"><span class="nav-number">3.1.</span> <span class="nav-text">1. 抓包发送到 Intruder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AE%BE%E7%BD%AE%E5%8F%98%E9%87%8F"><span class="nav-number">3.2.</span> <span class="nav-text">2. 设置变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%8A%A0%E8%BD%BD%E5%AD%97%E5%85%B8"><span class="nav-number">3.3.</span> <span class="nav-text">3. 加载字典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Grep-%E6%8F%90%E5%8F%96%E7%BB%93%E6%9E%9C"><span class="nav-number">3.4.</span> <span class="nav-text">4. Grep 提取结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%BC%80%E5%A7%8B%E6%94%BB%E5%87%BB"><span class="nav-number">3.5.</span> <span class="nav-text">5. 开始攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E9%AB%98%E9%A2%91%E6%8A%80%E5%B7%A7"><span class="nav-number">4.</span> <span class="nav-text">0x03 高频技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B9%B6%E5%8F%91%E9%99%90%E9%80%9F"><span class="nav-number">4.1.</span> <span class="nav-text">1. 并发限速</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Payload-%E5%A4%84%E7%90%86"><span class="nav-number">4.2.</span> <span class="nav-text">2. Payload 处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A4%9A%E9%98%B6%E6%AE%B5%E7%88%86%E7%A0%B4"><span class="nav-number">4.3.</span> <span class="nav-text">3. 多阶段爆破</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-Payload-%E7%B1%BB%E5%9E%8B%E6%B8%85%E5%8D%95"><span class="nav-number">5.</span> <span class="nav-text">0x04 Payload 类型清单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E9%98%B2%E5%BE%A1%E4%BE%A7"><span class="nav-number">6.</span> <span class="nav-text">0x05 防御侧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">0x06 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/06/10/BurpSuite-Intruder%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="BurpSuite Intruder 入门笔记 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BurpSuite Intruder 入门笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-06-10 11:00:00" itemprop="dateCreated datePublished" datetime="2026-06-10T11:00:00+08:00">2026-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:05:03" itemprop="dateModified" datetime="2026-09-01T18:05:03+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">工具使用</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>677</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>BurpSuite 是 Web 渗透最常用的工具没有之一。Intruder 模块负责自动化批量请求，是爆破、fuzz、批量注入的核心。本文梳理 Intruder 的 4 种攻击模式、Payload 类型与实战技巧。</p>
+<blockquote>
+<p>仅用于合法授权的安全研究。</p>
+</blockquote>
+<h2 id="0x01-四种攻击模式"><a href="#0x01-四种攻击模式" class="headerlink" title="0x01 四种攻击模式"></a>0x01 四种攻击模式</h2><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>适用场景</th>
+<th>请求数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sniper（狙击手）</td>
+<td>单一变量爆破（如密码字段）</td>
+<td>Payload 数</td>
+</tr>
+<tr>
+<td>Battering Ram（攻城槌）</td>
+<td>多变量同时用同一 Payload</td>
+<td>Payload 数</td>
+</tr>
+<tr>
+<td>Pitchfork（草叉）</td>
+<td>多变量并行（一一对应）</td>
+<td>最小 Payload 数</td>
+</tr>
+<tr>
+<td>Cluster Bomb（集束炸弹）</td>
+<td>多变量笛卡尔积（最常见）</td>
+<td>各 Payload 数之积</td>
+</tr>
+</tbody></table>
+<p>举例：登录爆破，用户名 <code>admin</code>，密码字段是变量 → 用 Sniper；用户名和密码都爆破 → 用 Cluster Bomb。</p>
+<h2 id="0x02-实战：登录爆破"><a href="#0x02-实战：登录爆破" class="headerlink" title="0x02 实战：登录爆破"></a>0x02 实战：登录爆破</h2><h3 id="1-抓包发送到-Intruder"><a href="#1-抓包发送到-Intruder" class="headerlink" title="1. 抓包发送到 Intruder"></a>1. 抓包发送到 Intruder</h3><p>Proxy → Intercept 抓到登录请求 → 右键 Send to Intruder。</p>
+<h3 id="2-设置变量"><a href="#2-设置变量" class="headerlink" title="2. 设置变量"></a>2. 设置变量</h3><p>进入 Intruder → Positions，点击 <code>Clear §</code> 后手动选中密码字段的值，点击 <code>Add §</code>：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/login</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>target.com</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-freedesktop"><span class="attr">username</span><span class="operator">=</span>admin&amp;password<span class="operator">=</span>§123456§</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-加载字典"><a href="#3-加载字典" class="headerlink" title="3. 加载字典"></a>3. 加载字典</h3><p>Payloads 标签：</p>
+<ul>
+<li>Payload type: Runtime file</li>
+<li>加载 SecLists 中的密码字典：<code>/usr/share/seclists/Passwords/Common-Credentials/10-million-password-list-top-10000.txt</code></li>
+<li>关闭 URL 编码（密码含特殊字符时按需）</li>
+</ul>
+<h3 id="4-Grep-提取结果"><a href="#4-Grep-提取结果" class="headerlink" title="4. Grep 提取结果"></a>4. Grep 提取结果</h3><p>Options → Grep - Extract → 添加匹配字符串：</p>
+<ul>
+<li>失败：<code>incorrect</code> &#x2F; <code>password_error</code> &#x2F; HTTP 401</li>
+<li>成功：<code>logout</code> &#x2F; <code>welcome</code> &#x2F; HTTP 302 跳转</li>
+</ul>
+<h3 id="5-开始攻击"><a href="#5-开始攻击" class="headerlink" title="5. 开始攻击"></a>5. 开始攻击</h3><p>Start attack，根据 Length 或 Status 列定位异常响应 → 成功爆破。</p>
+<h2 id="0x03-高频技巧"><a href="#0x03-高频技巧" class="headerlink" title="0x03 高频技巧"></a>0x03 高频技巧</h2><h3 id="1-并发限速"><a href="#1-并发限速" class="headerlink" title="1. 并发限速"></a>1. 并发限速</h3><p>避免触发 WAF&#x2F;封 IP：</p>
+<ul>
+<li>Resource Pool → Maximum concurrent requests &#x3D; 5</li>
+<li>Delay between requests &#x3D; 200ms</li>
+</ul>
+<h3 id="2-Payload-处理"><a href="#2-Payload-处理" class="headerlink" title="2. Payload 处理"></a>2. Payload 处理</h3><ul>
+<li>Match&#x2F;Replace：替换 <code>§</code> 中内容前做大小写变换</li>
+<li>Payload Processing → Add → Skip if matches → 过滤已知失败结果</li>
+<li>Character mapping：避免特殊字符被 URL 编码</li>
+</ul>
+<h3 id="3-多阶段爆破"><a href="#3-多阶段爆破" class="headerlink" title="3. 多阶段爆破"></a>3. 多阶段爆破</h3><p>如登录后还要绕 2FA：</p>
+<ol>
+<li>第一个 Intruder：登录 → 拿到 Session</li>
+<li>宏（Macro）→ 自动用上一步 Session 发起下一个请求</li>
+<li>第二个 Intruder：爆破 2FA</li>
+</ol>
+<h2 id="0x04-Payload-类型清单"><a href="#0x04-Payload-类型清单" class="headerlink" title="0x04 Payload 类型清单"></a>0x04 Payload 类型清单</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Simple list</td>
+<td>简单词表</td>
+</tr>
+<tr>
+<td>Runtime file</td>
+<td>加载外部字典文件</td>
+</tr>
+<tr>
+<td>Custom iterator</td>
+<td>字符组合生成器（如 4 位数字）</td>
+</tr>
+<tr>
+<td>Numbers</td>
+<td>数字序列（如 ID 枚举）</td>
+</tr>
+<tr>
+<td>Dates</td>
+<td>日期生成</td>
+</tr>
+<tr>
+<td>Username generator</td>
+<td>用户名自动生成</td>
+</tr>
+<tr>
+<td>Random string</td>
+<td>随机字符串 fuzz</td>
+</tr>
+<tr>
+<td>Bit flipper</td>
+<td>二进制位翻转（适合 fuzz 二进制协议）</td>
+</tr>
+<tr>
+<td>Case modification</td>
+<td>大小写变换</td>
+</tr>
+</tbody></table>
+<h2 id="0x05-防御侧"><a href="#0x05-防御侧" class="headerlink" title="0x05 防御侧"></a>0x05 防御侧</h2><ul>
+<li>限制单 IP 单账号每分钟登录次数 ≤ 5</li>
+<li>失败 N 次后启用图形验证码</li>
+<li>密码复杂度策略（长度 ≥ 12，含大小写数字符号）</li>
+<li>异地登录二次验证</li>
+<li>监控同 IP 多账号尝试</li>
+</ul>
+<h2 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h2><p>Intruder 不难，难在字典质量与 Grep-Match 的精准度。一份 <a target="_blank" rel="noopener" href="https://github.com/danielmiessler/SecLists">SecLists</a> + 一个清楚的差异点 &#x3D; 高效爆破。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/06/10/BurpSuite-Intruder%E5%85%A5%E9%97%A8/" title="BurpSuite Intruder 入门笔记">https://lvyatan.github.io/2026/06/10/BurpSuite-Intruder入门/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/BurpSuite/" rel="tag"># BurpSuite</a>
+              <a href="/tags/Web-%E6%B8%97%E9%80%8F/" rel="tag"># Web 渗透</a>
+              <a href="/tags/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/" rel="tag"># 暴力破解</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/06/22/XSS%E6%BC%8F%E6%B4%9E%E5%88%86%E7%B1%BB%E4%B8%8E%E5%88%A9%E7%94%A8/" rel="next" title="XSS 漏洞分类与利用笔记">
+                  XSS 漏洞分类与利用笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

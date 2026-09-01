@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0x00 前言Nmap 是渗透测试中绕不开的神级扫描工具。本文梳理常用参数、扫描类型与绕过技巧，作为命令速查表使用。 0x01 基础语法12345nmap [Scan Type] [Options] &lt;target&gt;# target 可以是 IP、域名、CIDR、范围、列表文件nmap 192.168.1.0&#x2F;24nmap 192.168.1.1-50nmap -iL targets.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nmap 扫描技巧总结">
+<meta property="og:url" content="https://lvyatan.github.io/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="0x00 前言Nmap 是渗透测试中绕不开的神级扫描工具。本文梳理常用参数、扫描类型与绕过技巧，作为命令速查表使用。 0x01 基础语法12345nmap [Scan Type] [Options] &lt;target&gt;# target 可以是 IP、域名、CIDR、范围、列表文件nmap 192.168.1.0&#x2F;24nmap 192.168.1.1-50nmap -iL targets.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-25T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T09:28:41.445Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="Nmap">
+<meta property="article:tag" content="信息收集">
+<meta property="article:tag" content="端口扫描">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/","path":"2026/08/25/Nmap扫描技巧总结/","title":"Nmap 扫描技巧总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Nmap 扫描技巧总结 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">0x01 基础语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E4%B8%BB%E6%9C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">0x02 主机发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">0x03 端口扫描类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-%E5%B8%B8%E7%94%A8%E5%AE%9E%E6%88%98%E7%BB%84%E5%90%88"><span class="nav-number">5.</span> <span class="nav-text">0x04 常用实战组合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BF%AB%E9%80%9F%E6%89%AB%E5%B8%B8%E8%A7%81%E7%AB%AF%E5%8F%A3"><span class="nav-number">5.1.</span> <span class="nav-text">1. 快速扫常见端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%85%A8%E7%AB%AF%E5%8F%A3-%E6%9C%8D%E5%8A%A1%E8%AF%86%E5%88%AB"><span class="nav-number">5.2.</span> <span class="nav-text">2. 全端口 + 服务识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%84%9A%E6%9C%AC%E5%BC%95%E6%93%8E-NSE"><span class="nav-number">5.3.</span> <span class="nav-text">3. 脚本引擎 NSE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%BE%93%E5%87%BA%E6%8A%A5%E5%91%8A"><span class="nav-number">5.4.</span> <span class="nav-text">4. 输出报告</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E9%98%B2%E7%81%AB%E5%A2%99-IDS-%E7%BB%95%E8%BF%87"><span class="nav-number">6.</span> <span class="nav-text">0x05 防火墙 &#x2F; IDS 绕过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-%E6%80%A7%E8%83%BD%E4%B8%8E%E5%8A%A0%E9%80%9F%E6%8A%80%E5%B7%A7"><span class="nav-number">7.</span> <span class="nav-text">0x06 性能与加速技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-%E5%AD%A6%E4%B9%A0%E5%BB%BA%E8%AE%AE"><span class="nav-number">8.</span> <span class="nav-text">0x07 学习建议</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Nmap 扫描技巧总结 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nmap 扫描技巧总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-25 10:00:00" itemprop="dateCreated datePublished" datetime="2026-08-25T10:00:00+08:00">2026-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 17:28:41" itemprop="dateModified" datetime="2026-09-01T17:28:41+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">工具使用</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>593</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>Nmap 是渗透测试中绕不开的神级扫描工具。本文梳理常用参数、扫描类型与绕过技巧，作为命令速查表使用。</p>
+<h2 id="0x01-基础语法"><a href="#0x01-基础语法" class="headerlink" title="0x01 基础语法"></a>0x01 基础语法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nmap [Scan Type] [Options] &lt;target&gt;</span><br><span class="line"><span class="comment"># target 可以是 IP、域名、CIDR、范围、列表文件</span></span><br><span class="line">nmap 192.168.1.0/24</span><br><span class="line">nmap 192.168.1.1-50</span><br><span class="line">nmap -iL targets.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-主机发现"><a href="#0x02-主机发现" class="headerlink" title="0x02 主机发现"></a>0x02 主机发现</h2><p>判断主机在线（不在线的不会做端口扫描）：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-sn</code></td>
+<td>只做主机发现，不扫端口</td>
+</tr>
+<tr>
+<td><code>-Pn</code></td>
+<td>跳过主机发现，强制扫描</td>
+</tr>
+<tr>
+<td><code>-PS80,443</code></td>
+<td>TCP SYN Ping 指定端口</td>
+</tr>
+<tr>
+<td><code>-PA80</code></td>
+<td>TCP ACK Ping</td>
+</tr>
+<tr>
+<td><code>-PE</code></td>
+<td>ICMP Echo Ping（容易被墙）</td>
+</tr>
+<tr>
+<td><code>-PU</code></td>
+<td>UDP Ping</td>
+</tr>
+<tr>
+<td><code>-n</code></td>
+<td>不做 DNS 解析（加速）</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>内网做信息收集，<code>-sn</code> 摸清存活主机非常关键：<br><code>nmap -sn 192.168.1.0/24 -oG alive.txt</code></p>
+</blockquote>
+<h2 id="0x03-端口扫描类型"><a href="#0x03-端口扫描类型" class="headerlink" title="0x03 端口扫描类型"></a>0x03 端口扫描类型</h2><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-sS</code></td>
+<td>SYN 半开扫描</td>
+<td>默认且最快，需 root</td>
+</tr>
+<tr>
+<td><code>-sT</code></td>
+<td>TCP 全连接</td>
+<td>不需 root，但日志多</td>
+</tr>
+<tr>
+<td><code>-sU</code></td>
+<td>UDP 扫描</td>
+<td>慢，常用 <code>--top-ports 100</code></td>
+</tr>
+<tr>
+<td><code>-sA</code></td>
+<td>ACK 扫描</td>
+<td>测防火墙规则</td>
+</tr>
+<tr>
+<td><code>-sF / -sX / -sN</code></td>
+<td>FIN&#x2F;Xmas&#x2F;Null</td>
+<td>绕过部分无状态防火墙</td>
+</tr>
+</tbody></table>
+<h2 id="0x04-常用实战组合"><a href="#0x04-常用实战组合" class="headerlink" title="0x04 常用实战组合"></a>0x04 常用实战组合</h2><h3 id="1-快速扫常见端口"><a href="#1-快速扫常见端口" class="headerlink" title="1. 快速扫常见端口"></a>1. 快速扫常见端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS --top-ports 1000 -T4 -n --open 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-全端口-服务识别"><a href="#2-全端口-服务识别" class="headerlink" title="2. 全端口 + 服务识别"></a>2. 全端口 + 服务识别</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- -sV -A -T4 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-p-</code> 全 65535 端口</li>
+<li><code>-sV</code> 服务版本</li>
+<li><code>-A</code> 综合探测（OS、脚本、Trace）</li>
+<li><code>-T4</code> 加速时序</li>
+</ul>
+<h3 id="3-脚本引擎-NSE"><a href="#3-脚本引擎-NSE" class="headerlink" title="3. 脚本引擎 NSE"></a>3. 脚本引擎 NSE</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 漏洞检测</span></span><br><span class="line">nmap --script vuln 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># SMB 信息</span></span><br><span class="line">nmap --script smb-enum-shares,smb-os-discovery -p 445 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># MySQL 空口令</span></span><br><span class="line">nmap --script mysql-empty-password -p 3306 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># HTTP 标题</span></span><br><span class="line">nmap --script http-title -p 80,443 192.168.1.0/24</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主机发现的 NSE 全家桶</span></span><br><span class="line">nmap --script=banner,nbstat,smb-os-discovery -p 139,445 192.168.1.0/24</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-输出报告"><a href="#4-输出报告" class="headerlink" title="4. 输出报告"></a>4. 输出报告</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- -oN result.txt -oX result.xml -oG result.gnmap 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-oN</code> 人类可读</li>
+<li><code>-oX</code> XML（导入其他工具）</li>
+<li><code>-oG</code> grep 友好</li>
+<li><code>-oA all</code> 三种格式同时输出</li>
+</ul>
+<h2 id="0x05-防火墙-IDS-绕过"><a href="#0x05-防火墙-IDS-绕过" class="headerlink" title="0x05 防火墙 &#x2F; IDS 绕过"></a>0x05 防火墙 &#x2F; IDS 绕过</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 分片报文</span></span><br><span class="line">nmap -sS -f 192.168.1.1</span><br><span class="line"><span class="comment"># 双重分片</span></span><br><span class="line">nmap -sS -ff 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 源端口欺骗</span></span><br><span class="line">nmap -sS --source-port 53 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># MAC 欺骗</span></span><br><span class="line">nmap -sS --spoof-mac 0 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时序慢扫</span></span><br><span class="line">nmap -sS -T0 -p- 192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 诱饵</span></span><br><span class="line">nmap -sS -D RND:10 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x06-性能与加速技巧"><a href="#0x06-性能与加速技巧" class="headerlink" title="0x06 性能与加速技巧"></a>0x06 性能与加速技巧</h2><ul>
+<li><code>-T0~5</code>：时序模板，0 最慢最隐蔽，5 最快最吵闹</li>
+<li><code>--min-rate 1000</code>：最低发包速率</li>
+<li><code>--max-retries 2</code>：重试上限</li>
+<li><code>--host-timeout 30m</code>：单主机超时</li>
+<li><code>-n</code>：不做 DNS 反查，加速 5-10 倍</li>
+</ul>
+<h2 id="0x07-学习建议"><a href="#0x07-学习建议" class="headerlink" title="0x07 学习建议"></a>0x07 学习建议</h2><ul>
+<li>官方文档 <a target="_blank" rel="noopener" href="https://nmap.org/book/">nmap.org&#x2F;book</a> 是唯一权威</li>
+<li>搭建本地靶场：Metasploitable2、Vulnhub</li>
+<li>多看 NSE 脚本，自己改一份</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/" title="Nmap 扫描技巧总结">https://lvyatan.github.io/2026/08/25/Nmap扫描技巧总结/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Nmap/" rel="tag"># Nmap</a>
+              <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="tag"># 信息收集</a>
+              <a href="/tags/%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/" rel="tag"># 端口扫描</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="prev" title="渗透测试信息收集方法论">
+                  <i class="fa fa-angle-left"></i> 渗透测试信息收集方法论
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/08/28/SQL%E6%B3%A8%E5%85%A5%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/" rel="next" title="SQL 注入从入门到实战笔记">
+                  SQL 注入从入门到实战笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>

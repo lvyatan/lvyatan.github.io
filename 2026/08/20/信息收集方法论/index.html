@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lvyatan.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"width":280},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null,"show_result":true},"fold":{"enable":false,"height":500},"language":false,"border_radius":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="“渗透的本质是信息收集。” ——TK 教主  信息收集占整个渗透测试 60-70% 的时间，质量直接决定后续打点的效率。本文梳理一份完整的方法论与工具清单。 一、企业资产测绘1.1 工商信息 企查查、天眼查、爱企查：拿全母公司、子公司、控股关系 国家企业信用信息公示系统：最权威  1.2 ICP 备案 工信部 ICP 备案查询：beian.miit.gov.cn 站长之家、爱站：批量查同一备案号">
+<meta property="og:type" content="article">
+<meta property="og:title" content="渗透测试信息收集方法论">
+<meta property="og:url" content="https://lvyatan.github.io/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/index.html">
+<meta property="og:site_name" content="网安学习笔记">
+<meta property="og:description" content="“渗透的本质是信息收集。” ——TK 教主  信息收集占整个渗透测试 60-70% 的时间，质量直接决定后续打点的效率。本文梳理一份完整的方法论与工具清单。 一、企业资产测绘1.1 工商信息 企查查、天眼查、爱企查：拿全母公司、子公司、控股关系 国家企业信用信息公示系统：最权威  1.2 ICP 备案 工信部 ICP 备案查询：beian.miit.gov.cn 站长之家、爱站：批量查同一备案号">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-20T01:30:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T09:29:04.113Z">
+<meta property="article:author" content="lvyatan">
+<meta property="article:tag" content="信息收集">
+<meta property="article:tag" content="OSINT">
+<meta property="article:tag" content="资产测绘">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lvyatan.github.io/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lvyatan.github.io/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/","path":"2026/08/20/信息收集方法论/","title":"渗透测试信息收集方法论"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>渗透测试信息收集方法论 | 网安学习笔记</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">网安学习笔记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">网络安全学习与渗透测试实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BC%81%E4%B8%9A%E8%B5%84%E4%BA%A7%E6%B5%8B%E7%BB%98"><span class="nav-number">1.</span> <span class="nav-text">一、企业资产测绘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%B7%A5%E5%95%86%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 工商信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-ICP-%E5%A4%87%E6%A1%88"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 ICP 备案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%AD%90%E5%9F%9F%E5%90%8D"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 子域名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-IP-%E6%AE%B5-C-%E6%AE%B5"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 IP 段 &amp; C 段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81Web-%E8%B5%84%E4%BA%A7%E5%8F%91%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">二、Web 资产发现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Web-%E6%8C%87%E7%BA%B9"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Web 指纹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E8%AF%AD%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 搜索引擎语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81Github-%E4%BB%A3%E7%A0%81%E6%B3%84%E9%9C%B2"><span class="nav-number">3.</span> <span class="nav-text">三、Github &amp; 代码泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%BA%BA%E5%91%98%E4%B8%8E%E7%A4%BE%E5%B7%A5"><span class="nav-number">4.</span> <span class="nav-text">四、人员与社工</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81SaaS-%E4%BA%91%E8%B5%84%E4%BA%A7"><span class="nav-number">5.</span> <span class="nav-text">五、SaaS &#x2F; 云资产</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E4%BF%A1%E6%81%AF%E6%95%B4%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">六、信息整理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%90%88%E8%A7%84%E4%B8%8E%E6%B3%95%E5%BE%8B%E8%BE%B9%E7%95%8C"><span class="nav-number">7.</span> <span class="nav-text">七、合规与法律边界</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lvyatan"
+      src="https://avatars.githubusercontent.com/lvyatan">
+  <p class="site-author-name" itemprop="name">lvyatan</p>
+  <div class="site-description" itemprop="description">个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lvyatan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lvyatan" rel="noopener me" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2427719053@qq.com" title="E-Mail → mailto:2427719053@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lvyatan.github.io/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/lvyatan">
+      <meta itemprop="name" content="lvyatan">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="网安学习笔记">
+      <meta itemprop="description" content="个人网络安全学习博客，记录渗透测试、漏洞挖掘、安全工具开发等技术笔记">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="渗透测试信息收集方法论 | 网安学习笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          渗透测试信息收集方法论
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-08-20 09:30:00" itemprop="dateCreated datePublished" datetime="2026-08-20T09:30:00+08:00">2026-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-01 17:29:04" itemprop="dateModified" datetime="2026-09-01T17:29:04+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">渗透测试</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>549</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>“渗透的本质是信息收集。” ——TK 教主</p>
+</blockquote>
+<p>信息收集占整个渗透测试 60-70% 的时间，质量直接决定后续打点的效率。本文梳理一份完整的方法论与工具清单。</p>
+<h2 id="一、企业资产测绘"><a href="#一、企业资产测绘" class="headerlink" title="一、企业资产测绘"></a>一、企业资产测绘</h2><h3 id="1-1-工商信息"><a href="#1-1-工商信息" class="headerlink" title="1.1 工商信息"></a>1.1 工商信息</h3><ul>
+<li>企查查、天眼查、爱企查：拿全母公司、子公司、控股关系</li>
+<li>国家企业信用信息公示系统：最权威</li>
+</ul>
+<h3 id="1-2-ICP-备案"><a href="#1-2-ICP-备案" class="headerlink" title="1.2 ICP 备案"></a>1.2 ICP 备案</h3><ul>
+<li>工信部 ICP 备案查询：<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/">beian.miit.gov.cn</a></li>
+<li>站长之家、爱站：批量查同一备案号的资产</li>
+</ul>
+<h3 id="1-3-子域名"><a href="#1-3-子域名" class="headerlink" title="1.3 子域名"></a>1.3 子域名</h3><p>工具全家桶：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 被动：从公开数据源拿</span></span><br><span class="line">subfinder -d target.com -o subs.txt</span><br><span class="line">croc -d target.com --silent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主动：DNS 爆破</span></span><br><span class="line">amass enum -d target.com -o amass.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 证书透明日志</span></span><br><span class="line">curl -s <span class="string">&quot;https://crt.sh/?q=%25.target.com&amp;output=json&quot;</span> | jq -r <span class="string">&#x27;.[].name_value&#x27;</span> | <span class="built_in">sort</span> -u</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-IP-段-C-段"><a href="#1-4-IP-段-C-段" class="headerlink" title="1.4 IP 段 &amp; C 段"></a>1.4 IP 段 &amp; C 段</h3><ul>
+<li>Whois：<code>whois 1.2.3.4</code> 拿 AS 号与网段</li>
+<li>Censys &#x2F; Shodan &#x2F; Fofa &#x2F; ZoomEye：反向查找</li>
+<li>各厂 IDC：阿里云、腾讯云 IP 段白名单</li>
+</ul>
+<h2 id="二、Web-资产发现"><a href="#二、Web-资产发现" class="headerlink" title="二、Web 资产发现"></a>二、Web 资产发现</h2><h3 id="2-1-端口扫描"><a href="#2-1-端口扫描" class="headerlink" title="2.1 端口扫描"></a>2.1 端口扫描</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 大范围快速扫</span></span><br><span class="line">masscan -p1-65535 1.2.3.0/24 --rate=10000 -oJ ports.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存活端口的指纹识别</span></span><br><span class="line">nmap -sV -p 80,443,8080,8443 -iL targets.txt --open</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-Web-指纹"><a href="#2-2-Web-指纹" class="headerlink" title="2.2 Web 指纹"></a>2.2 Web 指纹</h3><ul>
+<li><strong>Wappalyzer</strong> 浏览器插件：一键看技术栈</li>
+<li><strong>httpx</strong>：批量 HTTP 探活 + 标题 + 状态码 + 指纹</li>
+<li><strong>fingerprinthub</strong> &#x2F; <strong>EHole</strong>：国内指纹库</li>
+<li><strong>Gobuster</strong> &#x2F; <strong>ffuf</strong>：目录爆破</li>
+</ul>
+<h3 id="2-3-搜索引擎语法"><a href="#2-3-搜索引擎语法" class="headerlink" title="2.3 搜索引擎语法"></a>2.3 搜索引擎语法</h3><table>
+<thead>
+<tr>
+<th>引擎</th>
+<th>语法示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Google</td>
+<td><code>site:target.com intitle:&quot;管理后台&quot;</code></td>
+</tr>
+<tr>
+<td>Fofa</td>
+<td><code>domain=&quot;target.com&quot;</code></td>
+</tr>
+<tr>
+<td>Shodan</td>
+<td><code>hostname:target.com port:&quot;3389&quot;</code></td>
+</tr>
+<tr>
+<td>ZoomEye</td>
+<td><code>site:target.com</code></td>
+</tr>
+<tr>
+<td>Censys</td>
+<td><code>services.port=443 AND services.tls.certificates.leaf_data.subject.common_name=&quot;target.com&quot;</code></td>
+</tr>
+<tr>
+<td>Quake</td>
+<td><code>domain:&quot;target.com&quot;</code></td>
+</tr>
+</tbody></table>
+<h2 id="三、Github-代码泄露"><a href="#三、Github-代码泄露" class="headerlink" title="三、Github &amp; 代码泄露"></a>三、Github &amp; 代码泄露</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 gitrob / trufflehog 自动化扫</span></span><br><span class="line">trufflehog github --org=target</span><br><span class="line"></span><br><span class="line"><span class="comment"># 手工 dork</span></span><br><span class="line"><span class="string">&quot;target.com&quot;</span> password</span><br><span class="line"><span class="string">&quot;target.com&quot;</span> smtp</span><br><span class="line"><span class="string">&quot;target.com&quot;</span> api_key</span><br><span class="line"><span class="string">&quot;target.com&quot;</span> jdbc:mysql</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、人员与社工"><a href="#四、人员与社工" class="headerlink" title="四、人员与社工"></a>四、人员与社工</h2><ul>
+<li>LinkedIn &#x2F; 脉脉：找员工</li>
+<li>Github：员工 ID、提交邮箱</li>
+<li>邮箱格式推断：<code>firstname.lastname@target.com</code></li>
+</ul>
+<h2 id="五、SaaS-云资产"><a href="#五、SaaS-云资产" class="headerlink" title="五、SaaS &#x2F; 云资产"></a>五、SaaS &#x2F; 云资产</h2><ul>
+<li>子域 CNAME 指向云：[Takeover 漏洞] 重点</li>
+<li>S3 Bucket 翻找：<code>s3://target-backups/</code></li>
+</ul>
+<h2 id="六、信息整理"><a href="#六、信息整理" class="headerlink" title="六、信息整理"></a>六、信息整理</h2><p>最终产出三张表：</p>
+<ol>
+<li><strong>资产表</strong>：IP&#x2F;域名&#x2F;端口&#x2F;服务&#x2F;版本&#x2F;标题</li>
+<li><strong>漏洞清单</strong>：CVE 编号 + 状态 + 优先级</li>
+<li><strong>攻击路径图</strong>：内网横向起点 → 终点</li>
+</ol>
+<blockquote>
+<p>一份整理良好的信息收集文档，就是渗透报告的 80%。</p>
+</blockquote>
+<h2 id="七、合规与法律边界"><a href="#七、合规与法律边界" class="headerlink" title="七、合规与法律边界"></a>七、合规与法律边界</h2><p>仅对<strong>授权</strong>目标进行测试。任何未授权的扫描 &#x2F; 探测均属于违法行为，请勿越界。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>lvyatan
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lvyatan.github.io/2026/08/20/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E6%B3%95%E8%AE%BA/" title="渗透测试信息收集方法论">https://lvyatan.github.io/2026/08/20/信息收集方法论/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="tag"># 信息收集</a>
+              <a href="/tags/OSINT/" rel="tag"># OSINT</a>
+              <a href="/tags/%E8%B5%84%E4%BA%A7%E6%B5%8B%E7%BB%98/" rel="tag"># 资产测绘</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/08/15/Linux%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86/" rel="prev" title="Linux 提权思路整理">
+                  <i class="fa fa-angle-left"></i> Linux 提权思路整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/08/25/Nmap%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/" rel="next" title="Nmap 扫描技巧总结">
+                  Nmap 扫描技巧总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-shield"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<canvas id="particle-canvas"></canvas>
+<script>
+(function () {
+  'use strict';
+
+  // ====================================================================
+  // 1. 粒子动效：Canvas 粒子 + 连线 + 鼠标吸引
+  // ====================================================================
+  function initParticles() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999, radius: 140 };
+
+    // 配置
+    var COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#f472b6'];
+    var MAX_PARTICLES = window.innerWidth < 768 ? 38 : 70;
+    var LINK_DISTANCE = 130;
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function Particle() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.baseAlpha = Math.random() * 0.4 + 0.4;
+    }
+
+    Particle.prototype.update = function () {
+      // 鼠标吸引
+      var dx = mouse.x - this.x;
+      var dy = mouse.y - this.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        var force = (mouse.radius - dist) / mouse.radius;
+        this.vx += (dx / dist) * force * 0.06;
+        this.vy += (dy / dist) * force * 0.06;
+      }
+
+      // 摩擦
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+
+      // 限速
+      var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (speed > 1.5) {
+        this.vx = (this.vx / speed) * 1.5;
+        this.vy = (this.vy / speed) * 1.5;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // 边界回弹
+      if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+      if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+      this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+      this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+    };
+
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.fill();
+
+      // 柔光
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+      var grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    function drawLinks() {
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var p1 = particles[i];
+          var p2 = particles[j];
+          var dx = p1.x - p2.x;
+          var dy = p1.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            var alpha = (1 - dist / LINK_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      drawLinks();
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function createParticles() {
+      particles = [];
+      for (var i = 0; i < MAX_PARTICLES; i++) particles.push(new Particle());
+    }
+
+    // 初始化
+    resize();
+    createParticles();
+    animate();
+
+    // 鼠标 / 触摸
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    // resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resize();
+        createParticles();
+      }, 200);
+    });
+
+    // 低性能模式：电池或低性能时减粒子
+    if (navigator.getBattery && navigator.getBattery()) {
+      navigator.getBattery().then(function (battery) {
+        if (battery.discharging && battery.level < 0.2) {
+          MAX_PARTICLES = 25;
+          createParticles();
+        }
+      });
+    }
+  }
+
+  // ====================================================================
+  // 2. Hero 区：仅首页注入
+  // ====================================================================
+  function injectHero() {
+    // 通过 page 配置判断是否首页
+    var pageConfigs = document.querySelectorAll('script.next-config[data-name="page"]');
+    var isHome = false;
+    for (var i = 0; i < pageConfigs.length; i++) {
+      try {
+        var cfg = JSON.parse(pageConfigs[i].textContent || '{}');
+        if (cfg.isHome === true) { isHome = true; break; }
+      } catch (e) {}
+    }
+    if (!isHome) return;
+
+    var mainInner = document.querySelector('.main-inner.index.posts-expand');
+    if (!mainInner) return;
+    if (mainInner.querySelector('.hero-section')) return; // 防止重复
+
+    var hero = document.createElement('section');
+    hero.className = 'hero-section';
+    hero.innerHTML = ''
+      + '<div class="hero-content">'
+      + '  <span class="hero-eyebrow">CYBER · SECURITY · NOTES</span>'
+      + '  <h1 class="hero-title">网安学习笔记</h1>'
+      + '  <p class="hero-subtitle">'
+      + '    记录渗透测试、漏洞挖掘、安全工具开发的实践笔记。'
+      + '    <br>每一篇都是亲手敲过的 Payload、跑过的命令、踩过的坑。'
+      + '  </p>'
+      + '  <div class="hero-actions">'
+      + '    <a class="hero-btn hero-btn--primary" href="#main">'
+      + '      <i class="fa fa-book-open"></i> 开始阅读'
+      + '    </a>'
+      + '    <a class="hero-btn hero-btn--ghost" href="/about/">'
+      + '      <i class="fa fa-user"></i> 关于本站'
+      + '    </a>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="hero-scroll-hint">SCROLL</div>';
+
+    mainInner.insertBefore(hero, mainInner.firstChild);
+
+    // 入场动画
+    setTimeout(function () {
+      hero.style.opacity = '0';
+      hero.style.transform = 'translateY(20px)';
+      hero.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      requestAnimationFrame(function () {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+      });
+    }, 50);
+  }
+
+  // ====================================================================
+  // 3. 卡片入场动画（首页文章）
+  // ====================================================================
+  function animateCards() {
+    var cards = document.querySelectorAll('.index.posts-expand .post-block');
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    cards.forEach(function (card, idx) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.6s ease ' + (idx * 0.08) + 's, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + (idx * 0.08) + 's';
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(function (card) { io.observe(card); });
+  }
+
+  // ====================================================================
+  // 4. 启动
+  // ====================================================================
+  function boot() {
+    try { initParticles(); } catch (e) { console.warn('particles failed:', e); }
+    try { injectHero(); } catch (e) { console.warn('hero inject failed:', e); }
+    try { animateCards(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // PJAX 兼容（NexT 用 pjax 切页）
+  window.addEventListener('pjax:success', boot);
+})();
+</script>
+
+</body>
+</html>
